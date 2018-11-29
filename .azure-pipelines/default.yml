@@ -31,7 +31,7 @@ jobs:
      
      foreach ($folder in $foldersToIterate)
      {
-         python ./build_package.py --dest $(Build.SourcesDirectory)\dist "$folder"
+         python ./build_package.py --dest $(Build.ArtifactStagingDirectory) "$folder"
      }
      
     displayName: 'Generate Packages'
