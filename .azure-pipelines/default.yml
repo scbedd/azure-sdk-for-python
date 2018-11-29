@@ -18,7 +18,6 @@ jobs:
     displayName: 'Prep Environment, Install Packages copy'
 
   - powershell: |
-     $filter_string="azure-*"
      $input_filter_string="$(build_targeting_string)"
      
      if ([string]::IsNullOrEmpty($input_filter_string)) 
