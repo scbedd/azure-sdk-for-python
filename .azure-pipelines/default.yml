@@ -37,7 +37,3 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
-    inputs:
-      PathtoPublish: dist
-      ArtifactName: packages
-
