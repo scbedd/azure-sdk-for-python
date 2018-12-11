@@ -10,6 +10,7 @@ from __future__ import print_function
 import sys
 import glob
 import os
+import argparse
 from subprocess import check_call, CalledProcessError
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
@@ -25,7 +26,11 @@ def pip_command(command, error_ok=False):
         if not error_ok:
             sys.exit(1)
 
-packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
+parser.add_argument('-globArg', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the # of packages that dependencies will be downloaded for.')
+args = parser.parse_args()
+
+packages = [os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))]
 
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if "nspkg" in p]
@@ -35,8 +40,11 @@ nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 meta_packages = ['azure-mgmt', 'azure']
 
 content_packages = [p for p in packages if p not in nspkg_packages+meta_packages]
+
 # Put azure-common in front
-content_packages.remove("azure-common")
+if 'azure-common' in content_packages:
+    content_packages.remove("azure-common")
+
 content_packages.insert(0, "azure-common")
 
 print('Running dev setup...')
