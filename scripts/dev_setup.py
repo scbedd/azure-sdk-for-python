@@ -27,7 +27,7 @@ def pip_command(command, error_ok=False):
             sys.exit(1)
 
 parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
-parser.add_argument('-globArg', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the # of packages that dependencies will be downloaded for.')
+parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the # of packages that dependencies will be downloaded for.')
 args = parser.parse_args()
 
 packages = [os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))]
