@@ -12,7 +12,7 @@ jobs:
      cd $(Build.SourcesDirectory)
      
      ~/pypy3-v6.0.0-linux64/bin/pypy3 -m ensurepip
-     ~/pypy3-v6.0.0-linux64/bin/pypy3 scripts/dev_setup.py
+     ~/pypy3-v6.0.0-linux64/bin/pypy3 scripts/dev_setup.py -g $(build_targeting_string)
      
       $inputFilterSet="$(build_targeting_string)"
       
@@ -45,7 +45,7 @@ jobs:
      cd $(Build.SourcesDirectory)
      
      ~/bin/python3 -m ensurepip
-     ~/bin/python3 scripts/dev_setup.py
+     ~/bin/python3 scripts/dev_setup.py -g $(build_targeting_string)
      
       $inputFilterSet="$(build_targeting_string)"
       
