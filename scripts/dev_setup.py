@@ -30,7 +30,7 @@ parser = argparse.ArgumentParser(description='Set up the dev environment for sel
 parser.add_argument('--globArg', '-g', dest='globArg', default='azure*', help='Defaulted to "azure*", used to limit the # of packages that dependencies will be downloaded for.')
 args = parser.parse_args()
 
-packages = [os.path.dirname(p) for p in glob.glob('{0}/setup.py'.format(args.globArg))]
+packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py'.format(args.globArg))]
 
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if "nspkg" in p]
@@ -40,6 +40,12 @@ nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 meta_packages = ['azure-mgmt', 'azure']
 
 content_packages = [p for p in packages if p not in nspkg_packages+meta_packages]
+
+content_packages = [
+    'azure-common', 'azure-keyvault',  # common package, target package
+    'azure-mgmt-authorization', 'azure-mgmt-keyvault', # necessary for keyvault tests to run
+    'azure-sdk-tools', 'azure-mgmt-resource', 'azure-mgmt-storage' # necessary to run devtools_utils in azure-sdk-tools
+]
 
 # Always include azure-sdk-tools
 if 'azure-sdk-tools' not in content_packages:
