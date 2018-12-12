@@ -27,8 +27,6 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-     pip install pytest
-     pip install pytest-cov
      python scripts/dev_setup.py -g $(build_targeting_string)
     displayName: 'Test Setup'
 

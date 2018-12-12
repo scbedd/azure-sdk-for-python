@@ -12,14 +12,6 @@ jobs:
      cd $(Build.SourcesDirectory)
      
      ~/pypy3-v6.0.0-linux64/bin/pypy3 -m ensurepip
-
-     cd ~/pypy3-v6.0.0-linux64/
-     ls
-     cd 
-     cd $(Build.SourcesDirectory)
-     
-     ~/pypy3-v6.0.0-linux64/bin/pip install pytest
-     ~/pypy3-v6.0.0-linux64/bin/pip install pytest
      ~/pypy3-v6.0.0-linux64/bin/pypy3 scripts/dev_setup.py -g $(build_targeting_string)
      
       $inputFilterSet="$(build_targeting_string)"
@@ -53,8 +45,6 @@ jobs:
      cd $(Build.SourcesDirectory)
      
      ~/bin/python3 -m ensurepip
-     ~/bin/pip install pytest
-     ~/bin/pip install pytest-cov
      ~/bin/python3 scripts/dev_setup.py -g $(build_targeting_string)
      
       $inputFilterSet="$(build_targeting_string)"

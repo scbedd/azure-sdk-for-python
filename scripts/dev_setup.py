@@ -41,11 +41,15 @@ meta_packages = ['azure-mgmt', 'azure']
 
 content_packages = [p for p in packages if p not in nspkg_packages+meta_packages]
 
+# Always include azure-sdk-tools
+if 'azure-sdk-tools' not in content_packages:
+    content_packages.append('azure-sdk-tools')
+
 # Put azure-common in front
 if 'azure-common' in content_packages:
-    content_packages.remove("azure-common")
+    content_packages.remove('azure-common')
 
-content_packages.insert(0, "azure-common")
+content_packages.insert(0, 'azure-common')
 
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))
