@@ -2,7 +2,7 @@
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
 
 jobs:
-- job: Live Test Linux 2.7
+- job: Live_Test_Linux_2.7
   dependsOn:
   - 'Build_Target_Packages'
   pool:
@@ -12,7 +12,7 @@ jobs:
     parameters:
       pythonVersion: '2.7'
 
-- job: Live Test Windows 3.7
+- job: Live_Test_Windows_3.7
   dependsOn:
   - 'Build_Target_Packages'
   pool:
@@ -22,7 +22,7 @@ jobs:
     parameters:
       pythonVersion: '3.7'
 
-- job: Live Test OSX 3.6
+- job: Live_Test_OSX_3.6
   dependsOn:
   - 'Build_Target_Packages'
   pool:
