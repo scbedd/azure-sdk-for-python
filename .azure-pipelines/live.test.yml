@@ -11,8 +11,6 @@ jobs:
       pythonVersion: '2.7'
 
 - job: 'Live_Test_Windows_3_7'
-  dependsOn:
-  - 'Build_Target_Packages'
   pool:
     vmImage: 'vs2017-win2016'
   steps:
@@ -21,8 +19,6 @@ jobs:
       pythonVersion: '3.7'
 
 - job: 'Live_Test_OSX_3_6'
-  dependsOn:
-  - 'Build_Target_Packages'
   pool:
     vmImage: 'macOS-10.13'
   steps:
