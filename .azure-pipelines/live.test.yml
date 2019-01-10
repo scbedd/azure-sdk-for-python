@@ -3,8 +3,6 @@
 
 jobs:
 - job: 'Live_Test_Linux_2_7'
-  dependsOn:
-  - 'Build_Target_Packages'
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
