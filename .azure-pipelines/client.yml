@@ -1,5 +1,6 @@
 # Variables: 
 #  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'enable_live_tests' boolean value "1" or "0". By default, live tests will not be run. On internal publishing builds, this will be set to 1 and livetests will run.
 
 trigger:
 - master
@@ -60,3 +61,6 @@ jobs:
     vmImage: 'vs2017-win2016'
 
 - template: specialcase.test.yml
+
+- template: live.test.yml
+- condition: and(succeeded(), variables['Build.enable_live_tests']))
