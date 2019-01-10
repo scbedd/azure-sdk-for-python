@@ -3,9 +3,9 @@ parameters:
 
 steps:
 - task: UsePythonVersion@0
-  displayName: 'Use Python $(python.version)'
+  displayName: 'Use Python ${{ parameters.pythonVersion }}'
   inputs:
-    versionSpec: '$(python.version)'
+    versionSpec: ${{ parameters.pythonVersion }}
 - powershell: |
    $inputFilterSet="$(build_targeting_string)"
    
