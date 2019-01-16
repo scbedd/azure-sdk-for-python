@@ -20,7 +20,7 @@ class KeyVaultKeyTest(KeyvaultTestCase):
         super(KeyVaultKeyTest, self).tearDown()
 
     def _import_test_key(self, vault, key_id, import_to_hardware=False):
-
+        self.assertEqual(True, False)
         def _to_bytes(hex):
             if len(hex) % 2:
                 hex = '0{}'.format(hex)
