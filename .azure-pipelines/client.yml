@@ -17,9 +17,7 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel
-     pip install setuptools
-     pip install pathlib
+     pip install wheel setuptools pathlib
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -74,10 +72,7 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-     pip install wheel
-     pip install setuptools
-     pip install pathlib
-     pip install twine
+     pip install pathlib twine
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -92,10 +87,13 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7 For Build Tools'
+    inputs:
+      versionSpec: '3.7'
+
   - script: |
-     pip install wheel
-     pip install setuptools
-     pip install pathlib
+     pip install pathlib twine
     displayName: 'Prep Environment'
 
   - script: |
