@@ -44,7 +44,7 @@ def fix(*args, **kargs):
     else:
         file_name = os.path.join(default_file_path, default_file_name)
         
-    print 'processing: '+file_name
+    print('processing: '+file_name)
     xml_file = open(file_name, 'r')
     xml_doc = minidom.parse(xml_file)
     xml_file.close()
