@@ -116,7 +116,7 @@ jobs:
       versionSpec: '3.7'
 
   - script: |
-     pip install pathlib twine codecov
+     pip install pathlib twine
     displayName: 'Prep Environment'
 
   - script: |
