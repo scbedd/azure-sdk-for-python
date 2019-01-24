@@ -18,7 +18,7 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel setuptools pathlib
+     pip install wheel setuptools pathlib beautifulsoup4
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -84,8 +84,19 @@ jobs:
 
   - script: |
      coverage xml
-     pip install codecov && codecov -t $(codecov-python-repository-token)
+    displayName: 'Generate Coverage XML'
+
+  - script: |
+     codecov -t $(codecov-python-repository-token)
     displayName: 'Generate and Publish Code Cov'
+    condition: ne(variables['codecov-python-repository-token'], '')
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      # reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
 - job: Special_Python_Distro_Tests
   dependsOn:
