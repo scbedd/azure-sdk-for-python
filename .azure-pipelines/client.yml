@@ -84,6 +84,7 @@ jobs:
 
   - script: |
      coverage xml
+     coverage html
     displayName: 'Generate Coverage XML'
 
   - script: |
@@ -91,12 +92,17 @@ jobs:
     displayName: 'Generate and Publish Code Cov'
     condition: ne(variables['codecov-python-repository-token'], '')
 
+  - task: PythonScript@0
+    displayName: 'Inline CSS for Cobertura'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/inline_css_for_cobertura.py'
+
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-      # reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
+      reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
 - job: Special_Python_Distro_Tests
   dependsOn:
@@ -123,9 +129,6 @@ jobs:
      PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
      pypy3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" 
-
-     coverage xml
-     codecov -t $(codecov-python-repository-token)
     displayName: 'Setup and Run Filtered Tests PyPy3'
     continueOnError: true
 
@@ -144,8 +147,5 @@ jobs:
      PATH=/home/vsts/bin:$PATH
      python3 -m ensurepip
      python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
-     
-     coverage xml
-     codecov -t $(codecov-python-repository-token)
     displayName: 'Setup - Run Filtered Tests "Nightly" Python'
     continueOnError: true
