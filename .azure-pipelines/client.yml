@@ -89,7 +89,7 @@ jobs:
 
   - script: |
      codecov -t $(codecov-python-repository-token)
-    displayName: 'Generate and Publish Code Cov'
+    displayName: 'Publish Code Cov'
     condition: ne(variables['codecov-python-repository-token'], '')
 
   - task: PythonScript@0
@@ -102,7 +102,6 @@ jobs:
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-      reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
 - job: Special_Python_Distro_Tests
   dependsOn:
