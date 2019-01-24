@@ -32,5 +32,5 @@ def embed_css_in_html_file(html_file, css_dir):
 if __name__ == '__main__':
     for file in os.listdir(COVERAGE_REPORT_DIR):
         if file.endswith(".html"):
-            print(f"Embedding CSS in {file}")
+            print("Embedding CSS in {}".format(file))
             embed_css_in_html_file(os.path.join(COVERAGE_REPORT_DIR, file), COVERAGE_REPORT_DIR)
