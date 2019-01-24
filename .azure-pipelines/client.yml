@@ -18,7 +18,7 @@ jobs:
       versionSpec: 3.6
 
   - script: |
-     pip install wheel setuptools pathlib beautifulsoup4
+     pip install wheel setuptools pathlib
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -73,7 +73,7 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-     pip install pathlib twine codecov
+     pip install pathlib twine codecov beautifulsoup4
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
