@@ -23,7 +23,7 @@ def embed_css_in_html_file(html_file, css_dir):
         # insert the contents of the stylesheet into the style tag we just created
         tag.insert(0, c)
 
-        # then replace the sheet tag with the data from the 
+        # then replace the sheet tag with the data from the stylesheet 
         sheet.replaceWith(tag)
         
     with open(html_file, 'w') as f:
