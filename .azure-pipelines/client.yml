@@ -102,6 +102,7 @@ jobs:
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
 - job: Special_Python_Distro_Tests
   dependsOn:
