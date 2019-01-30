@@ -57,6 +57,13 @@ jobs:
      pip install wheel Jinja2
     displayName: 'Prep Environment'
 
+    # sudo is required for pip install, as a console_entrypoint shim needs to be placed in bin
+  - script: |
+      pip install setuptools wheel
+      sudo pip install doc-warden
+      ward scan -d $(Build.SourcesDirectory)
+    displayName: 'Verify Readmes'
+
   - task: PythonScript@0
     displayName: 'Analyze dependencies'
     enabled: true
