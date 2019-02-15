@@ -11,10 +11,6 @@ variables:
 
 jobs:
 - job: 'Analyze'
-
-  dependsOn:
-    - 'Build'
-
   pool:
     vmImage: 'ubuntu-16.04'
 
