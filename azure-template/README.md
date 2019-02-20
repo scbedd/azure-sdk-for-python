@@ -18,3 +18,5 @@ This readme (with some setup in ops) should eventually be ingested to [docs.micr
 # Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
+
+![Tracking](https://trackingexperiment.azurewebsites.net/api/TrackRequest?path=github.com%2FAzure%2Fazure-sdk-for-python%2Ftree%2Fmaster%2Fazure-cognitiveservices-search-customimagesearch%0D%0A%0D%0A "Tracking")
