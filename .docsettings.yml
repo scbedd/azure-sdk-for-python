@@ -19,7 +19,7 @@ known_content_issues:
   # data plane. common issue filed to azure-sdk-for-python
   - ['README.rst', '#4554']
   - ['azure-servicebus/README.rst', '#4554']
-  - ['azure-applicationinsights/README.rst', '#4554']
+  - ['sdk/applicationinsights/azure-applicationinsights/README.rst', '#4554']
   - ['azure-batch/README.rst', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-formrecognizer/README.rst', '#4554']
   - ['azure-cognitiveservices-knowledge-nspkg/README.rst', '#4554']
