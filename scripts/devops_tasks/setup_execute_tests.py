@@ -22,16 +22,13 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 # evaluating whether we want this or not.
 ALLOWED_RETURN_CODES = []
 
-def prep_and_run_tests(targeted_packages, python_version, test_res):
-    print('running test setup for {}'.format(targeted_packages))
-    run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(p) for p in targeted_packages])], root_dir)
-
-    print('Setup complete. Running pytest for {}'.format(targeted_packages))
-    command_array = [python_version, '-m', 'pytest']
-    command_array.extend(test_res)
-    command_array.extend(targeted_packages)
-    run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES)
-
+def prep_and_run_tests(targeted_packages):
+    print(targeted_packages)
+    filtered_packages = [package for package in targeted_packages if 'azure-servicebus' in package]
+    for package_dir in [package for package in targeted_packages if 'azure-servicebus' in package]:
+        print('running test setup for {}'.format(os.path.basename(package_dir)))
+        run_check_call(['tox'], package_dir)
+        
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
     parser.add_argument(
@@ -67,4 +64,4 @@ if __name__ == '__main__':
     if args.disablecov:
         test_results_arg.append('--no-cov')
 
-    prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
+    prep_and_run_tests(targeted_packages)

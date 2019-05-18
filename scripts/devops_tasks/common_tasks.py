@@ -10,11 +10,15 @@
 
 import glob
 from pathlib import Path
-from subprocess import check_call, CalledProcessError
+import subprocess
 import os
 import sys
+import re
 
 DEFAULT_BUILD_PACKAGES = ['azure-keyvault', 'azure-servicebus']
+ACCEPTABLE_RETURN_CODES = [
+    8,
+]
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
@@ -33,11 +37,13 @@ def process_glob_string(glob_string, target_root_dir):
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
-def run_check_call(command_array, working_directory, acceptable_return_codes = []):
+def run_check_call(command_array, working_directory, acceptable_return_codes = ACCEPTABLE_RETURN_CODES):
     print('Command Array: {0}, Target Working Directory: {1}'.format(command_array, working_directory))
     try:
-        check_call(command_array, cwd = working_directory)
-    except CalledProcessError as err:
+        result = subprocess.check_call(command_array, cwd=working_directory)
+        print(result)
+        return result
+    except subprocess.CalledProcessError as err:
         print(err) #, file = sys.stderr
         if err.returncode not in acceptable_return_codes:
             sys.exit(1)

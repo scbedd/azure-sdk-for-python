@@ -71,3 +71,6 @@ src/build
 adlEnv/
 
 code_reports
+
+# tox environment folders
+.tox/
