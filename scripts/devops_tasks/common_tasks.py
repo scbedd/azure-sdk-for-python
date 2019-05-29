@@ -10,7 +10,7 @@
 
 import glob
 from pathlib import Path
-import subprocess
+from subprocess import check_call, CalledProcessError
 import os
 import sys
 import re
