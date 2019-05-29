@@ -21,7 +21,7 @@ jobs:
         displayName: 'Generate Packages'
         inputs:
           scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "azure-*" --service=${{parameters.ServiceDirectory}}'
 
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
@@ -143,7 +143,7 @@ jobs:
         displayName: 'Setup and Run Tests'
         inputs:
           scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"$(build_targeting_string)" --junitxml="junit/test-results.xml"'
+          arguments: '"azure-*" --junitxml="junit/test-results.xml" --service="${{parameters.ServiceDirectory}}"'
 
       - task: PublishTestResults@2
         condition: succeededOrFailed()
@@ -154,53 +154,20 @@ jobs:
       - script: |
           coverage xml
         displayName: 'Generate Coverage XML'
+        continueOnError: true
 
       - script: |
           codecov -t $(codecov-python-repository-token)
         displayName: 'Publish Code Cov'
+        continueOnError: true
         condition: ne(variables['codecov-python-repository-token'], '')
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-
-  - job: Test_Alpha_Python
-    variables:
-    - template: ../variables/globals.yml
-
-    timeoutInMinutes: 90
-    
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-16.04'
-
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
-      - script: |
-          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-          cd ~/
-          git clone https://github.com/python/cpython.git
-          cd cpython
-          mkdir debug
-          cd debug
-          ../configure --enable-optimizations --prefix=$HOME
-          make install
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/bin:$PATH
-          python3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
-        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
-        continueOnError: true
 
   - job: Test_PyPy
     variables:
@@ -211,7 +178,7 @@ jobs:
     condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
     
     dependsOn:
-      - 'Test_Alpha_Python'
+      - 'Build'
 
     pool:
       vmImage: 'ubuntu-16.04'
@@ -233,6 +200,6 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
           pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" --disablecov
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --service=${{parameters.ServiceDirectory}}
         displayName: 'Setup and Run Filtered Tests PyPy3'
         continueOnError: true

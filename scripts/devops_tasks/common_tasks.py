@@ -40,10 +40,8 @@ def process_glob_string(glob_string, target_root_dir):
 def run_check_call(command_array, working_directory, acceptable_return_codes = ACCEPTABLE_RETURN_CODES):
     print('Command Array: {0}, Target Working Directory: {1}'.format(command_array, working_directory))
     try:
-        result = subprocess.check_call(command_array, cwd=working_directory)
-        print(result)
-        return result
-    except subprocess.CalledProcessError as err:
-        print(err) #, file = sys.stderr
+        check_call(command_array, cwd = working_directory)
+    except CalledProcessError as err:
         if err.returncode not in acceptable_return_codes:
+            print(err) #, file = sys.stderr
             sys.exit(1)
