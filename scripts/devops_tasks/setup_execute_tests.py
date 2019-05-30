@@ -36,12 +36,18 @@ def prep_and_run_tests(targeted_packages, python_version, test_res):
     command_array = [python_version, '-m', 'pytest']
     command_array.extend(test_res)
     command_array.extend(targeted_packages)
-    run_check_call(['tox'], root_dir, ALLOWED_RETURN_CODES)
+    run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES)
 
 def prep_and_run_tox(targeted_packages):
-    print(targeted_packages)
+    # if we are targeting only packages that are management plane, it is a possibility 
+    # that no tests running is an acceptable situation
+    # we explicitly handle this here.
+    if all(map(lambda x : 'mgmt' in x, targeted_packages)):
+        ALLOWED_RETURN_CODES.append(5)
+
+
     filtered_packages = [package for package in targeted_packages if 'azure-servicebus' in package]
-    for package_dir in [package for package in targeted_packages if 'azure-servicebus' in package]:
+    for package_dir in [package for package in targeted_packages if 'azure-servicebus' in package or 'azure-eventhubs' in package or 'azure-core' in package]:
         print('running test setup for {}'.format(os.path.basename(package_dir)))
         run_check_call(['tox'], package_dir)
 
@@ -72,6 +78,10 @@ if __name__ == '__main__':
         action='store_true')
 
     parser.add_argument(
+        '--tox',
+        help = ('Flag that enables testing with tox over the stand global install editable -> run tests.'))
+
+    parser.add_argument(
         '--service',
         help=('Name of service directory (under sdk/) to test.'
               'Example: --service applicationinsights'))
@@ -94,5 +104,7 @@ if __name__ == '__main__':
     if args.disablecov:
         test_results_arg.append('--no-cov')
 
-    # prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
-    prep_and_run_tox(targeted_packages)
+    if args.tox:
+        prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
+    else:
+        prep_and_run_tox(targeted_packages)
