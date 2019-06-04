@@ -18,7 +18,12 @@ from common_tasks import process_glob_string, run_check_call
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
-def execute_pylint(targeted_packages):
+def execute_pylint(targeted_packages, optional_arguments):
+    #pylint --output-format=parseable --rcfile {toxinidir}/../../../pylintrc --exit-zero {toxinidir}/azure
+
+    command_array = ['pylint', '--exit-zero', '-rn', '-j', '0', '--rcfile', os.path.join(root_dir, 'pylintrc')]
+    command_array.extend(optional_arguments)
+    command_array.extend([os.path.join(targeted_package, 'azure') for targeted_package in targeted_packages])
 
     run_check_call(command_array, root_dir)
 
@@ -54,4 +59,7 @@ if __name__ == '__main__':
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir)
-    prep_and_run_tests(targeted_packages)
+
+    optional_arguments = []
+
+    execute_pylint(targeted_packages, optional_arguments)
