@@ -14,7 +14,7 @@ from subprocess import check_call, CalledProcessError
 import os
 import sys
 
-DEFAULT_BUILD_PACKAGES = ['azure-keyvault', 'azure-servicebus']
+MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices-personalizer']
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
@@ -23,7 +23,7 @@ def process_glob_string(glob_string, target_root_dir):
     if glob_string:
         individual_globs = glob_string.split(',')
     else:
-        individual_globs = DEFAULT_BUILD_PACKAGES
+        individual_globs = ['azure-*']
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
@@ -32,6 +32,9 @@ def process_glob_string(glob_string, target_root_dir):
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
+
+def is_management_code(package):
+    
 
 def run_check_call(command_array, working_directory, acceptable_return_codes = []):
     print('Command Array: {0}, Target Working Directory: {1}'.format(command_array, working_directory))
