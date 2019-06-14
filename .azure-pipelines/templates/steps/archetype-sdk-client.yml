@@ -19,9 +19,9 @@ steps:
       scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
       arguments: $(OSName)
 
-  # - script: |
-  #     pip install pathlib twine codecov beautifulsoup4
-  #   displayName: 'Prep Environment'
+  - script: |
+      pip install pathlib twine codecov beautifulsoup4 tox
+    displayName: 'Prep Environment'
 
   - task: PythonScript@0
     displayName: 'Setup and Run Tests'
