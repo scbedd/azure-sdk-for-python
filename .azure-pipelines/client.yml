@@ -93,15 +93,15 @@ jobs:
 
     strategy:
       matrix:
-        Linux_Python27:
+        Linux:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
-        Windows_Python35:
+        Windows:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
           PythonVersion: '3.6'
-        MacOS_Python27:
+        MacOS:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '3.6'
