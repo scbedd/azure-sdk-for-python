@@ -12,8 +12,10 @@ import argparse
 import sys
 from pathlib import Path
 import os
+import glob
+import shutil
 
-from common_tasks import process_glob_string, run_check_call
+from common_tasks import process_glob_string, run_check_call, cleanup_folder
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
 dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
@@ -42,10 +44,23 @@ def prep_and_run_tests(targeted_packages, python_version, test_res):
 
 def prep_and_run_tox(targeted_packages):
     print(targeted_packages)
-    filtered_packages = [package for package in targeted_packages if 'azure-servicebus' in package]
-    for package_dir in [package for package in targeted_packages if 'azure-servicebus' in package]:
+    for package_dir in [package for package in targeted_packages]:
         print('running test setup for {}'.format(os.path.basename(package_dir)))
-        run_check_call(['tox'], package_dir)
+        run_check_call(['tox', '-p', 'all'], package_dir)
+
+def collect_coverage_files(targeted_packages):
+    root_coverage_dir = os.path.join(root_dir, '.coverage/')
+
+    try:
+        os.mkdir(root_coverage_dir)
+    except FileExistsError:
+        print('Coverage dir already exists. Cleaning.')
+        cleanup_folder(root_coverage_dir)
+
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(package_dir, '.coverage')
+        if os.path.isfile(coverage_file):
+            shutil.copyfile(coverage_file, os.path.join(root_coverage_dir, '{}.coverage'.format(os.path.basename(package_dir))))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
@@ -103,8 +118,9 @@ if __name__ == '__main__':
         test_results_arg.append('--no-cov')
 
     # prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
-    prep_and_run_tox(targeted_packages)
+    # prep_and_run_tox(targeted_packages)
 
+    collect_coverage_files(targeted_packages)
 #     if args.mark_arg:
 #         test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 

@@ -37,6 +37,14 @@ def process_glob_string(glob_string, target_root_dir):
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
+def cleanup_folder(target_folder):
+    for file in os.listdir(target_folder):
+        file_path = os.path.join(target_folder, file)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(e)
 
 def run_check_call(command_array, working_directory, acceptable_return_codes = [], run_as_shell = False):
     try:

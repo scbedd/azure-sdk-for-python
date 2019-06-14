@@ -8,6 +8,11 @@ __pycache__/
 # Virtual environment
 env*/
 
+# tox generated artifacts
+test-junit-*.xml
+pylint-*.out.txt
+coverage-*.xml
+
 # PTVS analysis
 .ptvs/
 
