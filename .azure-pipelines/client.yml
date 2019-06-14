@@ -25,7 +25,7 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          pip install wheel setuptools pathlib twine readme-renderer[md]
+          pip install wheel setuptools pathlib twine readme-renderer[md] tox
         displayName: 'Prep Environment'
 
       - task: PythonScript@0
