@@ -1,4 +1,5 @@
 -e ../../core/azure-common
+-e ../../core/azure-core
 -e ../../../tools/azure-sdk-tools
 coverage
 pytest-cov

@@ -1,4 +1,9 @@
--e ../../authorization/azure-mgmt-authorization
+-e ../../core/azure-common
 -e ../../core/azure-core
+-e ../../authorization/azure-mgmt-authorization
 -e ../azure-mgmt-keyvault
 -e ../../../tools/azure-sdk-tools
+coverage
+pytest-cov
+pylint==2.3.0; python_version >= '3.4'
+pylint==1.8.4; python_version < '3.4'
