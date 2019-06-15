@@ -49,7 +49,7 @@ def prep_and_run_tox(targeted_packages):
         run_check_call(['tox', '-p', 'all'], package_dir)
 
 def collect_coverage_files(targeted_packages):
-    root_coverage_dir = os.path.join(root_dir, '.coverage/')
+    root_coverage_dir = os.path.join(root_dir, '_coverage/')
 
     try:
         os.mkdir(root_coverage_dir)
@@ -57,10 +57,28 @@ def collect_coverage_files(targeted_packages):
         print('Coverage dir already exists. Cleaning.')
         cleanup_folder(root_coverage_dir)
 
+    coverage_files = []
+    # generate coverage files
     for package_dir in [package for package in targeted_packages]:
         coverage_file = os.path.join(package_dir, '.coverage')
         if os.path.isfile(coverage_file):
-            shutil.copyfile(coverage_file, os.path.join(root_coverage_dir, '{}.coverage'.format(os.path.basename(package_dir))))
+            destination_file = os.path.join(root_coverage_dir, '.coverage_{}'.format(os.path.basename(package_dir)))
+            shutil.copyfile(coverage_file, destination_file)
+            coverage_files.append(destination_file)
+
+    cov_cmd_array = ['coverage', 'combine']
+    cov_cmd_array.extend(coverage_files)
+
+    # merge them with coverage combine and copy to root
+    run_check_call(cov_cmd_array, os.path.join(root_dir, '_coverage/'))
+
+    source = os.path.join(root_coverage_dir, './.coverage')
+    dest = os.path.join(root_dir)
+
+    print(source)
+    print(dest)
+
+    shutil.move(source, root_dir)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
