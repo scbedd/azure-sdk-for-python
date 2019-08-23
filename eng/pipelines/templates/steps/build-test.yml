@@ -80,5 +80,6 @@ steps:
   
   - powershell: |
       gci -r $(Build.SourcesDirectory)/_coverage
+      gci $(Build.SourcesDirectory)
 
   - ${{ parameters.AdditionalTestSteps }}
