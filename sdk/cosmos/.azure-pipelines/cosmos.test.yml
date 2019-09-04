@@ -1,4 +1,10 @@
-trigger: none
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - sdk/cosmos/
 
 pr:
   branches:
