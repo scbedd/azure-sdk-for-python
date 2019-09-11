@@ -65,7 +65,7 @@ def prep_tests(targeted_packages, python_version):
         [
             python_version,
             dev_setup_script_location,
-            "--disabledevelop",
+            "--exceptionlist=azure-eventhubs-checkpointstoreblob-aio",
             "-p",
             ",".join([os.path.basename(p) for p in targeted_packages])
         ],
