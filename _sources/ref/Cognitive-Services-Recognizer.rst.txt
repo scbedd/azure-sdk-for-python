@@ -1,0 +1,46 @@
+
+=============================
+Cognitive Services Recognizer
+=============================
+
+
+***************
+Client Packages
+***************
+
+
+--------------------------------------
+azure-cognitiveservices-formrecognizer
+--------------------------------------
+
+**Published Versions**
+
+.. raw:: html
+
+    <embed>
+        <ul id="vazure-cognitiveservices-formrecognizer"></ul>
+        <script type="text/javascript">
+            populateIndexList('#vazure-cognitiveservices-formrecognizer', 'azure-cognitiveservices-formrecognizer')
+        </script>
+    </embed>
+
+------------
+
+
+-------------------------------------
+azure-cognitiveservices-inkrecognizer
+-------------------------------------
+
+**Published Versions**
+
+.. raw:: html
+
+    <embed>
+        <ul id="vazure-cognitiveservices-inkrecognizer"></ul>
+        <script type="text/javascript">
+            populateIndexList('#vazure-cognitiveservices-inkrecognizer', 'azure-cognitiveservices-inkrecognizer')
+        </script>
+    </embed>
+
+------------
+
