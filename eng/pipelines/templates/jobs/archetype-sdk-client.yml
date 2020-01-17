@@ -3,7 +3,7 @@ parameters:
   BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-core'
-  TestTimeoutInMinutes: 0
+  TestTimeoutInMinutes: 20
   ToxEnvParallel: '--tenvparallel'
   TestMatrix:
     # Linux_Python27:
