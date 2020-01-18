@@ -26,6 +26,8 @@ _docs
 RECORD.txt
 build/
 *.egg-info/
+.tox_cache_dir_sdist
+.tox_cache_dir_whl
 
 # Test results
 TestResults/
