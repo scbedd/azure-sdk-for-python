@@ -55,7 +55,7 @@ for example_file in all_files:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
-              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
+              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon', 'sphinx_autodoc_typehints']
 
 intersphinx_mapping = {
     # Dependencies
@@ -67,11 +67,13 @@ intersphinx_mapping = {
     'trio': ('https://trio.readthedocs.io/en/stable/', None),
     'msal': ('https://msal-python.readthedocs.io/en/latest/', None),
     # Azure packages
-    'azure-core': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.1.1/', None),
-    'azure-identity': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/1.1.0/', None),
+    'azure-core': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/', None),
+    'azure-identity': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/latest/', None),
 }
 
 autodoc_member_order = 'groupwise'
+
+set_type_checking_flag = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
