@@ -142,7 +142,7 @@ stages:
               displayName: "Docs.MS Release"
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
-              dependsOn: PublishPackage
+#              dependsOn: PublishPackage
 
               pool:
                 vmImage: ubuntu-18.04
@@ -161,6 +161,10 @@ stages:
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
+                      - template: /eng/common/pipelines/templates/steps/get-pr-owners.yml
+                        parameters:
+                          TargetVariable: "OwningGHUser"
+                          ServiceDirectory: ${{parameters.ServiceDirectory}}
                       - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
                         parameters:
                           ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
@@ -176,6 +180,7 @@ stages:
                           Language: 'python'
                           ServiceDirectory: ${{ parameters.ServiceDirectory }}
                           DocRepoDestinationPath: 'docs-ref-services/' 
+                          GHReviewersVariable: 'OwningGHUser'
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
