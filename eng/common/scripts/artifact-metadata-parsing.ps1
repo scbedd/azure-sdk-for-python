@@ -107,6 +107,7 @@ function ParseMavenPackage($pkg, $workingDirectory) {
 
   return New-Object PSObject -Property @{
     PackageId      = $pkgId
+    GroupId        = $groupId
     PackageVersion = $pkgVersion
     Deployable     = $forceCreate -or !(IsMavenPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion -groupId $groupId.Replace(".", "/"))
     ReleaseNotes   = $releaseNotes
@@ -492,9 +493,11 @@ function VerifyPackages($pkgRepository, $artifactLocation, $workingDirectory, $a
       $pkgList += New-Object PSObject -Property @{
         PackageId      = $parsedPackage.PackageId
         PackageVersion = $parsedPackage.PackageVersion
+        GroupId        = $parsedPackage.GroupId
         Tag            = $tag
         ReleaseNotes   = $parsedPackage.ReleaseNotes
         ReadmeContent  = $parsedPackage.ReadmeContent
+        IsPrerelease   = [AzureEngSemanticVersion]::ParseVersionString($parsedPackage.PackageVersion).IsPrerelease
       }
     }
     catch {
