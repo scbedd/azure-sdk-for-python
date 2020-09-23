@@ -40,6 +40,10 @@ TEMP_FOLDER_NAME = ".tmp_code_path"
 
 logging.getLogger().setLevel(logging.INFO)
 
+# for compatibility reasons with previously released packages
+CUSTOM_REGRESSION_INSTALLED_PACKAGES = [
+    'msrestazure'
+]
 
 class CustomVirtualEnv:
     def __init__(self, path):

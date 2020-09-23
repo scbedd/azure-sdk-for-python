@@ -365,8 +365,7 @@ def install_package_from_whl(
     logging.info("Installed package from {}".format(package_whl_path))
 
 
-def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
-    # This method returns list of requirements from dev_requirements by filtering out packages in given list
+def get_dev_requirements(pkg_root_path, dest_dir):
     dev_req_path = os.path.join(pkg_root_path, DEV_REQ_FILE)
     if not os.path.exists(dev_req_path):
         logging.info("{0} is not found in package root {1}".format(DEV_REQ_FILE, pkg_root_path))
@@ -375,6 +374,14 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
     requirements = []
     with open(dev_req_path, "r") as dev_req_file:
         requirements = dev_req_file.readlines()
+
+    return requirements
+
+def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
+    # This method returns list of requirements from dev_requirements by filtering out packages in given list
+    dev_req_path = os.path.join(pkg_root_path, DEV_REQ_FILE)
+    
+    requirements = get_dev_requirements(pkg_root_path, dest_dir)
 
     # filter any package given in excluded list
     requirements = [
@@ -390,6 +397,23 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
         dev_req_file.writelines(requirements)
 
     return new_dev_req_path
+
+def extend_dev_requirements(pkg_root_path, packages_to_include, dest_dir):
+    dev_req_path = os.path.join(pkg_root_path, DEV_REQ_FILE)
+
+    requirements = get_dev_requirements(pkg_root_path, dest_dir)
+
+    # include any package given in included list. omit duplicate
+
+    for requirement in packages_to_include:
+        if requirement not in requirements:
+            requirements.append(requirement)
+
+    logging.info("Extended dev requirements: {}".format(requirements))
+    # create new dev requirements file with different name for filtered requirements
+    new_dev_req_path = os.path.join(dest_dir, NEW_DEV_REQ_FILE)
+    with open(new_dev_req_path, "w") as dev_req_file:
+        dev_req_file.writelines(requirements)
 
 def is_required_version_on_pypi(package_name, spec):
     from pypi_tools.pypi import PyPIClient
