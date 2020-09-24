@@ -235,10 +235,14 @@ class RegressionTest:
         installed_pkgs = [req for req in installed_pkgs if req not in tools_packages]
 
         list_to_exclude.extend(installed_pkgs)
+        
         # install dev requirement but skip already installed package which is being tested or present in dev requirement
         filtered_dev_req_path = filter_dev_requirements(
             dependent_pkg_path, list_to_exclude, dependent_pkg_path
         )
+
+        # install packages for compatibility reasons
+        extend_dev_requirements(filtered_dev_req_path, CUSTOM_REGRESSION_INSTALLED_PACKAGES)
 
         if filtered_dev_req_path:
             logging.info(
