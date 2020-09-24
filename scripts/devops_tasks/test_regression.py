@@ -20,6 +20,7 @@ from common_tasks import (
     parse_require,
     install_package_from_whl,
     filter_dev_requirements,
+    extend_dev_requirements,
     find_packages_missing_on_pypi,
     find_whl,
     find_tools_packages,
