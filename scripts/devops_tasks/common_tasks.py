@@ -402,7 +402,7 @@ def extend_dev_requirements(dev_req_path, packages_to_include):
 
     logging.info("Extending dev requirements. New result:: {}".format(requirements))
     # create new dev requirements file with different name for filtered requirements
-    with open(new_dev_req_path, "w") as dev_req_file:
+    with open(dev_req_path, "w") as dev_req_file:
         dev_req_file.writelines(requirements)
 
 def is_required_version_on_pypi(package_name, spec):
