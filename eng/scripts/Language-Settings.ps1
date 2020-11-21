@@ -133,7 +133,6 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
 
   $allJson  = Get-Content $pkgJsonLoc | ConvertFrom-Json
   $visibleInCI = @{}
-
   for ($i=0; $i -lt $allJson.packages.Length; $i++) {
     $pkgDef = $allJson.packages[$i]
 
@@ -169,6 +168,15 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
           }
           exclude_path = @("test*","example*","sample*","doc*")
         }
+
+      if ($releasingPkg.IsPrerelease) {
+        if (-not $existingPackageDef.package_info.version) {
+          $newItem.package_info | Add-Member -NotePropertyName version -NotePropertyValue ""
+        }
+
+        $newItem.package_info.version = ">=$($releasingPkg.PackageVersion)"
+      }
+
       $allJson.packages += $newItem
     }
   }
