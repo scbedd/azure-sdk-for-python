@@ -13,13 +13,19 @@ from subprocess import check_call
 import logging
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement, parse_version
-from pypi_tools.pypi import PyPIClient
 
 setup_parser_path = os.path.abspath(
     os.path.join(os.path.abspath(__file__), "..", "..", "versioning")
 )
 sys.path.append(setup_parser_path)
 from setup_parser import get_install_requires
+
+azure_sdk_tools = os.path.abspath(
+    os.path.join(os.path.abspath(__file__), "..", "..", "..", "tools", "azure-sdk-tools", "pypi_tools")
+)
+sys.path.append(azure_sdk_tools)
+
+from pypi import PyPIClient
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
