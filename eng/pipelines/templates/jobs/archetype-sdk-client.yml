@@ -185,7 +185,7 @@ jobs:
           arguments: '-BuildID $(Build.BuildId)'
 
     - pwsh: |
-        $toxenvvar = "whl,sdist"
+        $toxenvvar = "whl,sdist,depends"
         if ('$(System.TeamProject)' -eq 'internal') {
           $toxenvvar = "whl,sdist,depends,latestdependency,mindependency"
         }
