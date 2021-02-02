@@ -99,7 +99,7 @@ stages:
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to registry: pypi.org'
                         inputs:
-                          pythonUploadServiceConnection: 'pypi.org - azure-sdk'
+                          pythonUploadServiceConnection: 'pypi.org - azure-sdk-token'
 
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
@@ -108,9 +108,9 @@ stages:
 
                       - script: |
                           set -e
-                          twine upload --repository 'pypi' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.whl
+                          twine upload --repository 'pypiorg' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.whl
                           echo "Uploaded whl to pypi"
-                          twine upload --repository 'pypi' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.zip
+                          twine upload --repository 'pypiorg' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.zip
                           echo "Uploaded zip to pypi"
                         displayName: 'Publish package to registry: pypi.org'
 
