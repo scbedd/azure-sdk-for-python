@@ -96,16 +96,15 @@ def _is_autorest_v3(client_class):
     return "credential" in args
 
 def RecordedByProxy(func):
-
     @functools.wraps(func)
     def record_wrap(*args, **kwargs):
-        print('starting recording')
-        value = func(*args, **kwargs)
-        print('stopping recording')
-        return value
+        print('Start Recording Here.')
 
+        value = func(*args, **kwargs)
+
+        print('Stop Recording Here.')
+        return value
     return record_wrap
-    
 
 class AzureProxyTestCase(ProxiedTest):
     def __init__(
@@ -223,10 +222,10 @@ class AzureProxyTestCase(ProxiedTest):
         # would make resource group creation fail.
         # To avoid that, we also delete the resource group in the
         # setup, and we wait for that delete to complete.
-        super(AzureTestCase, self).setUp()
+        super(AzureProxyTestCase, self).setUp()
 
     def tearDown(self):
-        return super(AzureTestCase, self).tearDown()
+        return super(AzureProxyTestCase, self).tearDown()
 
     def get_credential(self, client_class, **kwargs):
 

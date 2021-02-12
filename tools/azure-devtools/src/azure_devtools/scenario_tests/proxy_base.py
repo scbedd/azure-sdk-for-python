@@ -41,14 +41,15 @@ class ProxiedTest(IntegrationTestBase):  # pylint: disable=too-many-instance-att
                  method_name, config_file=None, recording_dir=None, recording_name=None, recording_processors=None,
                  replay_processors=None, recording_patches=None, replay_patches=None, match_body=False,
                  custom_request_matchers=None):
-        super(ProxyTest, self).__init__(method_name)
+        super(ProxiedTest, self).__init__(method_name)
 
 
         self.test_resources_count = 0
+        self.is_live = 'true'
         self.original_env = os.environ.copy()
 
     def setUp(self):
-        super(ProxyTest, self).setUp()
+        super(ProxiedTest, self).setUp()
 
         if self.is_live and os.environ.get('AZURE_SKIP_LIVE_RECORDING', '').lower() == 'true':
             return
