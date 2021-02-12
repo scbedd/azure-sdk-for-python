@@ -25,17 +25,18 @@ from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureProxyTestCase, PowerShellPreparer, RecordedByProxy
 
 SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
 
-class SchemaRegistryTests(AzureTestCase):
+class SchemaRegistryTests(AzureProxyTestCase):
 
     def create_client(self, endpoint):
         credential = self.get_credential(SchemaRegistryClient)
         return self.create_client_from_credential(SchemaRegistryClient, credential, endpoint=endpoint)
 
     @SchemaRegistryPowerShellPreparer()
+    @RecordedByProxy
     def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
         schema_name = self.get_resource_name('test-schema-basic')

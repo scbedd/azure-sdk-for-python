@@ -95,6 +95,17 @@ def _is_autorest_v3(client_class):
     args = get_arg_spec(client_class.__init__).args
     return "credential" in args
 
+def RecordedByProxy(func):
+
+    @functools.wraps(func)
+    def record_wrap(*args, **kwargs):
+        print('starting recording')
+        value = func(*args, **kwargs)
+        print('stopping recording')
+        return value
+
+    return record_wrap
+    
 
 class AzureProxyTestCase(ProxiedTest):
     def __init__(

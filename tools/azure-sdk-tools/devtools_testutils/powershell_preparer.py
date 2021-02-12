@@ -50,6 +50,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.needed_keys = needed_keys
 
     def _set_mgmt_settings_real_values(self):
+        pass
         if self.is_live:
             os.environ["AZURE_TENANT_ID"] = os.environ[
                 "{}_TENANT_ID".format(self.directory.upper())

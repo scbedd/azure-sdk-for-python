@@ -14,6 +14,8 @@ from .storage_testcase import (
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
 
+from .azure_proxied_testcase import AzureProxyTestCase, RecordedByProxy
+
 __all__ = [
     "AzureMgmtTestCase",
     "AzureMgmtPreparer",
@@ -22,11 +24,12 @@ __all__ = [
     "StorageAccountPreparer",
     "CachedStorageAccountPreparer",
     "FakeStorageAccount",
-    "AzureTestCase",
+    "AzureProxyTestCase"
     "is_live",
     "get_region_override",
     "KeyVaultPreparer",
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
+    "RecordedByProxy"
 ]
