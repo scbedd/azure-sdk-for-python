@@ -10,6 +10,7 @@ import pytest
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from devtools_testutils import (
     AzureTestCase,
+    RecordedByProxy,
     AzureMgmtPreparer,
     FakeResource,
     ResourceGroupPreparer,
@@ -142,6 +143,7 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
             AzureKeyCredential(text_analytics_account_key),
             **self.client_kwargs
         )
+
 
 
 @pytest.fixture(scope="session")

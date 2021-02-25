@@ -12,6 +12,7 @@ from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from devtools_testutils import RecordedByProxy
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
@@ -24,6 +25,7 @@ from azure.ai.textanalytics import (
 # the first one
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
+
 class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -34,6 +36,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    @RecordedByProxy
     def test_all_successful_passing_dict(self, client):
 
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
@@ -85,6 +88,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+
     def test_passing_only_string(self, client):
         docs = [
             u"My SSN is 859-98-0987.",
@@ -206,6 +210,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+
     def test_show_stats_and_model_version(self, client):
         def callback(response):
             self.assertIsNotNone(response)
