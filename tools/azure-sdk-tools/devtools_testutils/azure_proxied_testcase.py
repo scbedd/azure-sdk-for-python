@@ -96,14 +96,25 @@ def _is_autorest_v3(client_class):
     args = get_arg_spec(client_class.__init__).args
     return "credential" in args
 
+
+import requests
+
 def RecordedByProxy(func):
     @functools.wraps(func)
     def record_wrap(*args, **kwargs):
         print('Start Recording Here.')
-        
-        value = func(*args, **kwargs)
 
-        print('Stop Recording Here.')
+        result = requests.post('https://localhost:5001/record/start', headers = {'x-recording-file' : func.__name__}, verify=False)
+
+        # patch _requests here. target is azure.core.PipelineClientBase._request
+        # with mock.patch.object(Counter, 'increment', wraps=) as fake_increment:
+        
+        trimmed_kwargs = {k:v for k,v in kwargs.items()}
+        trim_kwargs_from_test_function(func, trimmed_kwargs)
+
+        value = func(*args, **trimmed_kwargs)
+
+        result = requests.post('https://localhost:5001/record/stop', headers = {'x-recording-file' : func.__name__}, verify=False)
         return value
     return record_wrap
 
