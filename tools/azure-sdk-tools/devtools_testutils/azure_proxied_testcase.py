@@ -12,6 +12,8 @@ import time
 import zlib
 import pdb
 
+from azure.core import PipelineClient
+
 try:
     from inspect import getfullargspec as get_arg_spec
 except ImportError:
@@ -98,25 +100,46 @@ def _is_autorest_v3(client_class):
 
 
 import requests
+from contextlib import contextmanager
+
+
+@contextmanager
+def patch_requests_func(request_transform):
+    original_func = PipelineClient._request
+
+    def combined_call(*args, **kwargs):
+        adjusted_args, adjusted_kwargs = request_transform(*args,**kwargs)
+        original_func(*adjusted_args, **adjusted_kwargs)
+    
+    setattr(PipelineClient, original_func.__name__, combined_call)
+
 
 def RecordedByProxy(func):
     @functools.wraps(func)
     def record_wrap(*args, **kwargs):
         print('Start Recording Here.')
 
+        # in recording mode, we start the recording
         result = requests.post('https://localhost:5001/record/start', headers = {'x-recording-file' : func.__name__}, verify=False)
+        recording_id = result.headers["x-recording-id"]
 
-        # patch _requests here. target is azure.core.PipelineClientBase._request
-        # with mock.patch.object(Counter, 'increment', wraps=) as fake_increment:
-        
+        def transform_args(*args, **kwargs):
+            if 'url' in args:
+                print(recording_id)
+            return args, kwargs
+
         trimmed_kwargs = {k:v for k,v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        value = func(*args, **trimmed_kwargs)
+        # patch _requests here. target is azure.core.PipelineClientBase._request
+        # with mock.patch('azure.core.PipelineClientBase._request', wraps=):
+        with patch_requests_func(transform_args):
+            value = func(*args, **trimmed_kwargs)
 
         result = requests.post('https://localhost:5001/record/stop', headers = {'x-recording-file' : func.__name__}, verify=False)
         return value
     return record_wrap
+
 
 class AzureProxyTestCase(ProxiedTest):
     def __init__(
