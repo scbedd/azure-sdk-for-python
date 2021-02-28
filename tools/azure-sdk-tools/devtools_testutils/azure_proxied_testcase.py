@@ -109,30 +109,30 @@ def patch_requests_func(request_transform):
 
     def combined_call(*args, **kwargs):
         adjusted_args, adjusted_kwargs = request_transform(*args,**kwargs)
-        original_func(*adjusted_args, **adjusted_kwargs)
+        print(args)
+        return original_func(*adjusted_args, **adjusted_kwargs)
     
-    setattr(PipelineClient, original_func.__name__, combined_call)
+    PipelineClient._request = combined_call
+    yield None
+
+    PipelineClient._request = original_func
 
 
 def RecordedByProxy(func):
     @functools.wraps(func)
     def record_wrap(*args, **kwargs):
-        print('Start Recording Here.')
+        original_req = PipelineClient._request
 
-        # in recording mode, we start the recording
         result = requests.post('https://localhost:5001/record/start', headers = {'x-recording-file' : func.__name__}, verify=False)
         recording_id = result.headers["x-recording-id"]
-
+        
         def transform_args(*args, **kwargs):
-            if 'url' in args:
-                print(recording_id)
+            upstream_url = args[2]
             return args, kwargs
 
         trimmed_kwargs = {k:v for k,v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        # patch _requests here. target is azure.core.PipelineClientBase._request
-        # with mock.patch('azure.core.PipelineClientBase._request', wraps=):
         with patch_requests_func(transform_args):
             value = func(*args, **trimmed_kwargs)
 
