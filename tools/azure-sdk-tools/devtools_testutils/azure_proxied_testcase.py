@@ -109,7 +109,7 @@ def patch_requests_func(request_transform):
 
     def combined_call(*args, **kwargs):
         adjusted_args, adjusted_kwargs = request_transform(*args,**kwargs)
-        print(args)
+        print(adjusted_args)
         return original_func(*adjusted_args, **adjusted_kwargs)
     
     PipelineClient._request = combined_call
@@ -117,18 +117,35 @@ def patch_requests_func(request_transform):
 
     PipelineClient._request = original_func
 
+import pdb
 
 def RecordedByProxy(func):
     @functools.wraps(func)
     def record_wrap(*args, **kwargs):
         original_req = PipelineClient._request
 
-        result = requests.post('https://localhost:5001/record/start', headers = {'x-recording-file' : func.__name__}, verify=False)
+        if os.getenv('PROXY_MODE') == "record":
+            result = requests.post('https://localhost:5001/record/start', headers = {'x-recording-file' : func.__name__}, verify=False)
+            os.environ["ALL_PROXY"] = "http://localhost:5001/"
+
+        elif os.getenv('PROXY_MODE') == "playback":
+            recording_id = ""
+
+        
         recording_id = result.headers["x-recording-id"]
         
         def transform_args(*args, **kwargs):
-            upstream_url = args[2]
-            return args, kwargs
+            new_args = list(args)
+
+
+            if os.getenv('PROXY_MODE') == "record":
+                upstream_url = new_args[2]
+                # new_args[2] = "http://localhost:5000"
+                
+                headers_dict = new_args[4] 
+                headers_dict['x-recording-upstream-base-uri'] = upstream_url
+                headers_dict['x-recording-id'] = recording_id
+            return tuple(new_args), kwargs
 
         trimmed_kwargs = {k:v for k,v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
@@ -136,7 +153,13 @@ def RecordedByProxy(func):
         with patch_requests_func(transform_args):
             value = func(*args, **trimmed_kwargs)
 
-        result = requests.post('https://localhost:5001/record/stop', headers = {'x-recording-file' : func.__name__}, verify=False)
+        if os.getenv('PROXY_MODE') == "record":
+            result = requests.post('https://localhost:5001/record/stop', headers = {'x-recording-file' : func.__name__, 'x-recording-save': True}, verify=False)
+            
+            os.environ["ALL_PROXY"] = ""
+        elif os.getenv('PROXY_MODE') == "playback":
+            recording_id = ""
+
         return value
     return record_wrap
 
