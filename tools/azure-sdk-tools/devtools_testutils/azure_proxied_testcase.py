@@ -12,7 +12,7 @@ import time
 import zlib
 import pdb
 
-from azure.core import PipelineClient
+from azure.core.pipeline.transport import RequestsTransport
 
 try:
     from inspect import getfullargspec as get_arg_spec
@@ -102,65 +102,113 @@ def _is_autorest_v3(client_class):
 import requests
 from contextlib import contextmanager
 
+PROXY_URL = "https://localhost:5001"
+RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
+RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
+PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
+PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
+TEST_FILE_FORMAT = "recordings/{}.txt"
+
+def write_recording_id(test_id, recording_id):
+    try:
+        os.makedirs("recordings")
+    except:
+        pass
+
+    with open(TEST_FILE_FORMAT.format(test_id), "w") as f:
+        f.write(recording_id)
+
+
+def get_recording_id(test_id):
+    with open(TEST_FILE_FORMAT.format(test_id), "r") as f:
+        result = f.readline()
+
+    return result.strip()
 
 @contextmanager
 def patch_requests_func(request_transform):
-    original_func = PipelineClient._request
+    original_func = RequestsTransport.send
 
     def combined_call(*args, **kwargs):
         adjusted_args, adjusted_kwargs = request_transform(*args,**kwargs)
-        print(adjusted_args)
         return original_func(*adjusted_args, **adjusted_kwargs)
     
-    PipelineClient._request = combined_call
+    RequestsTransport.send = combined_call
     yield None
 
-    PipelineClient._request = original_func
+    RequestsTransport.send = original_func
 
-import pdb
+URL_INDEX = 2
+HEADER_INDEX = 4
+
 
 def RecordedByProxy(func):
     @functools.wraps(func)
     def record_wrap(*args, **kwargs):
-        original_req = PipelineClient._request
+        recording_id = ""
+        test_id = func.__name__
 
-        if os.getenv('PROXY_MODE') == "record":
-            result = requests.post('https://localhost:5001/record/start', headers = {'x-recording-file' : func.__name__}, verify=False)
-            os.environ["ALL_PROXY"] = "http://localhost:5001/"
+        if os.getenv("AZURE_RECORD_MODE") == "record":
+            result = requests.post(
+                RECORDING_START_URL, headers={"x-recording-file": test_id}, verify=False
+            )
+            recording_id = result.headers["x-recording-id"]
+        elif os.getenv("AZURE_RECORD_MODE") == "playback":
+            result = requests.post(
+                PLAYBACK_START_URL,
+                headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+                verify=False,
+            )
+            recording_id = get_recording_id(test_id)
 
-        elif os.getenv('PROXY_MODE') == "playback":
-            recording_id = ""
-
-        
-        recording_id = result.headers["x-recording-id"]
-        
         def transform_args(*args, **kwargs):
-            new_args = list(args)
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+            upstream_url = request.url.replace("//text", "/text")
+            headers = request.headers
+            
+            pdb.set_trace()
 
+            kwargs["connection_verify"] = False
 
-            if os.getenv('PROXY_MODE') == "record":
-                upstream_url = new_args[2]
-                # new_args[2] = "http://localhost:5000"
-                
-                headers_dict = new_args[4] 
-                headers_dict['x-recording-upstream-base-uri'] = upstream_url
-                headers_dict['x-recording-id'] = recording_id
-            return tuple(new_args), kwargs
+            # in recording, we want to forward the request with record mode of record
+            if os.getenv("AZURE_RECORD_MODE") == "record":
+                headers["x-recording-upstream-base-uri"] = upstream_url
+                headers["x-recording-id"] = recording_id
+                headers["x-recording-mode"] = "record"
+                request.url = PROXY_URL
+
+            # otherwise we want to forward the request with record mode of playback
+            elif os.getenv("AZURE_RECORD_MODE") == "playback":
+                headers["x-recording-upstream-base-uri"] = upstream_url
+                headers["x-recording-id"] = recording_id
+                headers["x-recording-mode"] = "playback"
+                request.url = PROXY_URL
+
+            return tuple(copied_positional_args), kwargs
 
         trimmed_kwargs = {k:v for k,v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
         with patch_requests_func(transform_args):
             value = func(*args, **trimmed_kwargs)
-
-        if os.getenv('PROXY_MODE') == "record":
-            result = requests.post('https://localhost:5001/record/stop', headers = {'x-recording-file' : func.__name__, 'x-recording-save': True}, verify=False)
-            
-            os.environ["ALL_PROXY"] = ""
-        elif os.getenv('PROXY_MODE') == "playback":
-            recording_id = ""
+           
+        if os.getenv("AZURE_RECORD_MODE") == "record":
+            result = requests.post(
+                RECORDING_STOP_URL,
+                headers={"x-recording-file": test_id, "x-recording-id": recording_id, "x-recording-save": "true"},
+                verify=False,
+            )
+            write_recording_id(test_id, recording_id)
+        elif os.getenv("AZURE_RECORD_MODE") == "playback":
+            result = requests.post(
+                PLAYBACK_STOP_URL,
+                headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+                verify=False,
+            )
 
         return value
+
     return record_wrap
 
 
