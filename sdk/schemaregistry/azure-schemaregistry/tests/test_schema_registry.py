@@ -21,6 +21,8 @@ import functools
 import pytest
 import uuid
 
+import os
+
 from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
@@ -28,15 +30,21 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from devtools_testutils import AzureTestCase, PowerShellPreparer, RecordedByProxy
 
 SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
+class MockCredential():
+    def get_token(self, *scopes, **kwargs):
+        from azure.core.credentials import AccessToken
+        return AccessToken("fake-token", 0)
 
 class SchemaRegistryTests(AzureTestCase):
-
     def create_client(self, endpoint):
-        credential = self.get_credential(SchemaRegistryClient)
+        if os.getenv('AZURE_RECORD_MODE') == "playback":
+            credential = MockCredential();
+        else:
+            credential = self.get_credential(SchemaRegistryClient)
         return self.create_client_from_credential(SchemaRegistryClient, credential, endpoint=endpoint)
 
-    @RecordedByProxy
     @SchemaRegistryPowerShellPreparer()
+    @RecordedByProxy
     def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         client = self.create_client(schemaregistry_endpoint)
 

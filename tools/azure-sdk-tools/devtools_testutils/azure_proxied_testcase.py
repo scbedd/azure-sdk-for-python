@@ -167,8 +167,6 @@ def RecordedByProxy(func):
             upstream_url = request.url.replace("//text", "/text")
             headers = request.headers
             
-            pdb.set_trace()
-
             kwargs["connection_verify"] = False
 
             # in recording, we want to forward the request with record mode of record
