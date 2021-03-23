@@ -133,7 +133,6 @@ class SchemaRegistryTests(AzureTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ClientAuthenticationError):
-            pdb.set_trace()
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
     # @SchemaRegistryPowerShellPreparer()

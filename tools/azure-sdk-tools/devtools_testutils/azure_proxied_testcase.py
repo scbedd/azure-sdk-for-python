@@ -12,7 +12,7 @@ import time
 import zlib
 import pdb
 
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport, AsyncioRequestsTransport
 
 try:
     from inspect import getfullargspec as get_arg_spec
@@ -132,15 +132,11 @@ def patch_requests_func(request_transform):
     def combined_call(*args, **kwargs):
         adjusted_args, adjusted_kwargs = request_transform(*args,**kwargs)
         return original_func(*adjusted_args, **adjusted_kwargs)
-    
+        
     RequestsTransport.send = combined_call
     yield None
 
     RequestsTransport.send = original_func
-
-URL_INDEX = 2
-HEADER_INDEX = 4
-
 
 def RecordedByProxy(func):
     @functools.wraps(func)
@@ -188,8 +184,10 @@ def RecordedByProxy(func):
         trimmed_kwargs = {k:v for k,v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
+        # this ensures that within this scope, we've monkeypatched the send functionality
         with patch_requests_func(transform_args):
-            value = func(*args, **trimmed_kwargs)
+            # call the modified function.
+            func(*args, **trimmed_kwargs)
            
         if os.getenv("AZURE_RECORD_MODE") == "record":
             result = requests.post(
