@@ -14,7 +14,7 @@ from .storage_testcase import (
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
 
-from .azure_proxied_testcase import AzureProxyTestCase, RecordedByProxy
+from .azure_proxied_testcase import RecordedByProxy
 
 __all__ = [
     "AzureMgmtTestCase",
