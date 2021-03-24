@@ -71,7 +71,7 @@ class AbstractPreparer(object):
                 except Exception as e:
                     msg = "Preparer failure when creating resource {} for test {}: {}".format(
                                   self.__class__.__name__,
-                                  test_class_instance,
+                                  test_class_instance, 
                                   e)
                     while e:
                         try:
@@ -137,7 +137,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                     self.moniker
                 )
 
-            # We shouldn't trim the same kwargs that we use for deletion,
+            # We shouldn't trim the same kwargs that we use for deletion, 
             # we may remove some of the variables we needed to do the delete.
             trimmed_kwargs = {k:v for k,v in kwargs.items()}
             trim_kwargs_from_test_function(fn, trimmed_kwargs)
@@ -153,7 +153,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                         loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)
-            finally:
+            finally:              
                 # If we use cache we delay deletion for the end.
                 # This won't guarantee deletion order, but it will guarantee everything delayed
                 # does get deleted, in the worst case by getting rid of the RG at the top.
@@ -230,7 +230,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
 class SingleValueReplacer(RecordingProcessor):
     # pylint: disable=no-member
     def process_request(self, request):
-        from six.moves.urllib_parse import quote_plus  # pylint: disable=import-error,import-outside-toplevel
+        from six.moves.urllib_parse import quote_plus  # pylint: disable=import-error, relative-import
         if self.random_name in request.uri:
             request.uri = request.uri.replace(self.random_name, self.moniker)
         elif quote_plus(self.random_name) in request.uri:
