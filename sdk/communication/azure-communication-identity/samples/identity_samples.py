@@ -11,11 +11,14 @@ FILE: identity_sample.py
 DESCRIPTION:
     These samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
 
-    ///authenticating a client via a connection string
 USAGE:
     python identity_samples.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    2) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    3) AZURE_CLIENT_ID - the client ID of your active directory application
+    4) AZURE_CLIENT_SECRET - the secret of your active directory application
+    5) AZURE_TENANT_ID - the tenant ID of your active directory application
 """
 import os
 
@@ -73,7 +76,7 @@ class CommunicationIdentityClientSamples(object):
         user = identity_client.create_user()
         print("User created with id:" + user.identifier)
 
-    def create_user_with_token(self):
+    def create_user_and_token(self):
         from azure.communication.identity import (
             CommunicationIdentityClient,
             CommunicationTokenScope
@@ -84,7 +87,7 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
-        user, tokenresponse = identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+        user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
         print("User created with id:" + user.identifier)
         print("Token issued with value: " + tokenresponse.token)
 
@@ -104,7 +107,7 @@ class CommunicationIdentityClientSamples(object):
 if __name__ == '__main__':
     sample = CommunicationIdentityClientSamples()
     sample.create_user()
-    sample.create_user_with_token()
+    sample.create_user_and_token()
     sample.get_token()
     sample.revoke_tokens()
     sample.delete_user()

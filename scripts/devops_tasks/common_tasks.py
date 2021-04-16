@@ -193,6 +193,10 @@ def parse_setup_requires(setup_path):
     return python_requires
 
 
+def get_name_from_specifier(version):
+    return re.split(r'[><=]', version)[0]
+
+
 def filter_for_compatibility(package_set):
     collected_packages = []
     v = sys.version_info
@@ -475,4 +479,4 @@ def get_package_properties(setup_py_path):
     """
     pkgName, version, _, requires = parse_setup(setup_py_path)
     is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
-    return pkgName, version, is_new_sdk
+    return pkgName, version, is_new_sdk, setup_py_path

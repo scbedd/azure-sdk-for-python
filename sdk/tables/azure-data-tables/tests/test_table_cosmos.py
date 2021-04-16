@@ -17,6 +17,7 @@ from datetime import (
 
 from devtools_testutils import AzureTestCase
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -157,7 +158,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
         table_count = 0
         page_count = 0
-        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             for table in table_page:
@@ -201,7 +202,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
-        tables = list(ts.query_tables(filter=name_filter))
+        tables = list(ts.query_tables(name_filter))
 
         # Assert
         assert tables is not None
@@ -301,8 +302,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
-
 
     @pytest.mark.skip("Cosmos does not support table access policy")
     @CosmosPreparer()
@@ -414,7 +413,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                table.set_table_access_policy(signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)
 

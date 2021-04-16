@@ -11,11 +11,14 @@ FILE: identity_sample_async.py
 DESCRIPTION:
     These async samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
 
-    ///authenticating a client via a connection string
 USAGE:
     python identity_samples_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    2) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    3) AZURE_CLIENT_ID - the client ID of your active directory application
+    4) AZURE_CLIENT_SECRET - the secret of your active directory application
+    5) AZURE_TENANT_ID - the tenant ID of your active directory application
 """
 
 import asyncio
@@ -75,7 +78,7 @@ class CommunicationIdentityClientSamples(object):
             user = await identity_client.create_user()
             print("User created with id:" + user.identifier)
 
-    async def create_user_with_token(self):
+    async def create_user_and_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
@@ -86,7 +89,7 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             print("Creating new user with token")
-            user, tokenresponse = await identity_client.create_user_with_token(scopes=[CommunicationTokenScope.CHAT])
+            user, tokenresponse = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
             print("User created with id:" + user.identifier)
             print("Token issued with value: " + tokenresponse.token)
 
@@ -107,7 +110,7 @@ class CommunicationIdentityClientSamples(object):
 async def main():
     sample = CommunicationIdentityClientSamples()
     await sample.create_user()
-    await sample.create_user_with_token()
+    await sample.create_user_and_token()
     await sample.get_token()
     await sample.revoke_tokens()
     await sample.delete_user()

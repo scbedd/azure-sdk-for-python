@@ -104,6 +104,10 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
                 storage_account.name,
                 "storagename"
             )
+            self.test_class_instance.scrubber.register_name_pair(
+                ":.{43}=\r",
+                ":fake_shared_key=\r"
+            )
         else:
             name = "storagename"
             storage_account.name = name
@@ -155,7 +159,7 @@ class StorageTestCase(AzureMgmtTestCase):
         self.configure_logging()
 
     def connection_string(self, account, key):
-        return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+        return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
 
     def account_url(self, storage_account, storage_type):
         """Return an url of storage account.

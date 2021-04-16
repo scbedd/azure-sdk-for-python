@@ -4,8 +4,8 @@ languages:
   - python
 products:
   - azure
-  - azure-eventgrid
-urlFragment: azure-eventgrid-samples
+  - azure-event-grid
+urlFragment: eventgrid-samples
 ---
 
 # Azure Event Grid Client Library Python Samples
@@ -70,5 +70,7 @@ To publish events, dict representation of the models could also be used as follo
 
 [python-eg-publish-samples]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/publish_samples
 [python-eg-consume-samples]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/consume_samples
+
+[python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_consume_custom_payload.py
 
 [publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
