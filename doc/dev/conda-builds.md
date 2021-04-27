@@ -4,6 +4,18 @@
 
 Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/latest/install-conda-build.html) to install `conda` and `conda-build`.
 
+Once you've downloaded both of those.
+
+#### If using powershell, you will need to prep your environment before proceeding to the next step
+
+```
+powershell -ExecutionPolicy ByPass -NoExit -Command "& '<path-to-conda-folder>\shell\condabin\conda-hook.ps1' ; conda activate '<path-to-conda-folder>' "
+```
+
+Afterwards, invoke `conda init powershell` and re-create the pshell session.
+
+By default, your powershell environment will now load `conda`. If you want pure pip, you will need to use explicit invocations of your `python` locations to create virtual envs.
+
 ## CI Build Process
 
 There will be a `CondaArtifact` defined in the `ci.yml` of each service directory. (`sdk/<service>`)
@@ -15,27 +27,23 @@ A Conda Artifact defines:
 - Any other necessary details.
 
 ## How to Build an Azure SDK Conda Package Locally
-#### If using powershell, you will need to prep your environment before proceeding to the next step
 
-```
-powershell -ExecutionPolicy ByPass -NoExit -Command "& '<path-to-conda-folder>\shell\condabin\conda-hook.ps1' ; conda activate '<path-to-conda-folder>' "
-```
-
-Afterwards, invoke `conda init powershell` and re-create the pshell session.
-
-By default, your powershell environment will now load `conda`. If you want pure pip, you will need to use explicit invocations of your `python` locations to create virtual envs.
 ### Set up your conda environment
-
 
 You will notice that all the azure-sdk conda distributions have the **same** version number and requirement set. This is due to the fact that the azure-sdk team pushes our conda packages out in waves. To support this, all versions are set via a common environment variable `AZURESDK_CONDA_VERSION`.
 
 We keep this environment variable set properly across all our builds by using a common `conda_env.yml` when creating our build environment. This environment definition ensures that: 
 
-1. Our channel `https://azuresdkconda.blob.core.windows.net/channel1/` is added to the set to download packages
-2. The environment variable `AZURESDK_CONDA_VERSION` will be set exactly once.
+* The environment variable `AZURESDK_CONDA_VERSION` will be set exactly once.
   
+Unfortunately, our channel `https://azuresdkconda.blob.core.windows.net/channel1/` must either be:
 
-Reference the `conda_env.yml` in your local build by pass `-f <path to conda_env.yml>` when you create your conda environment.
+1. Installed manually via a `conda config --add channels https://azuresdkconda.blob.core.windows.net/channel1/
+2. Referenced in any command that has need of it via the `-c https://azuresdkconda.blob.core.windows.net/channel1/` argument.
+
+This is due to the fact that when creating an environment based on an `environment.yml`, channels are not automatically added. This is a security feature, not a bug.
+
+To use, reference the `conda_env.yml` in your local build by pass `-f <path to conda_env.yml>` when you create your conda environment.
 
 ```
 conda env create --yes --quiet --name ${{ artifact.name }} -f $(Build.SourcesDirectory)/eng/conda_env.yml
