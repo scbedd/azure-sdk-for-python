@@ -12,6 +12,11 @@ import re
 import sys
 import textwrap
 
+root_dir = path.abspath(path.join(path.abspath(__file__), "..", ".."))
+common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
+sys.path.append(common_task_path)
+from common_tasks import process_glob_string, run_check_call, parse_setup
+
 # Todo: This should use a common omit logic once ci scripts are refactored into ci_tools
 skip_pkgs = [
     'azure-mgmt-documentdb',         # deprecated
