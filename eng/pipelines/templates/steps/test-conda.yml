@@ -1,0 +1,87 @@
+parameters:
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: ServiceDirectory
+    type: string
+    default: ''
+  - name: CondaArtifacts
+    type: object
+    default: []
+  - name: TestMarkArgument
+    type: string
+    default: ''
+  - name: PythonVersion
+    type: string
+    default: ''
+  - name: OSVmImage
+    type: string
+    default: ''
+
+steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'conda'
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
+
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    inputs:
+      versionSpec: $(PythonVersion)
+
+  - ${{ each artifact in parameters.CondaArtifacts }}:
+    - bash: |
+        echo "##vso[task.prependpath]$CONDA/bin"
+      displayName: 'Prepend PATH with Conda and INIT'
+
+    - bash: |
+        conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
+        conda install --name ${{ artifact.name }} --yes --quiet conda-build
+        source activate ${{ artifact.name }}
+        conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
+      displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Artifact'
+
+    - bash: |
+        source activate ${{ artifact.name }}
+        pip install -r eng/ci_tools.txt
+        conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
+      displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
+
+    - pwsh: |
+        mkdir $(Agent.BuildDirectory)/conda/
+        Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda_checkout"
+      displayName: 'Create Conda Working Directory for Testing'
+
+    - ${{ each checkout in artifact.checkout }}:
+      - pwsh:
+          Write-Host "Clean up Conda Build Directory $(conda.build)"
+          Remove-Item $(conda.build)/* -Recurse -Force
+        displayName: 'Clean Up Before Testing ${{ artifact.name }}'
+
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - "${{ checkout.checkout_path }}/${{ checkout.package }}"
+            - "tools/"
+          Repositories:
+            - Name: "Azure/azure-sdk-for-python"
+              Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
+              WorkingDirectory: "$(conda.build)"
+          SkipDefaultCheckout: true
+
+      - pwsh: |
+          Get-ChildItem $(conda.build) -R
+        displayName: 'Dump contents of the artifact staging directory'
+
+      - bash: |
+          source activate ${{ artifact.name }}
+          pip install -r dev_requirements.txt
+          pytest .
+        displayName: 'Run tests for ${{ checkout.package }}'
+        workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
