@@ -36,9 +36,10 @@ parameters:
   default: 'generate_matrix'
 
 jobs:
-- job: ${{ parameters.GenerateJobName }}
+- job: generate_matrix_$[variables.invocationCounter]
   variables:
     displayNameFilter: $[ coalesce(variables.jobMatrixFilter, '.*') ]
+    invocationCounter: $[counter(1, 0)]
   pool:
     name: ${{ parameters.Pool }}
     vmImage: ${{ parameters.OsVmImage }}
@@ -92,8 +93,8 @@ jobs:
     - template: ${{ parameters.JobTemplatePath }}
       parameters:
         UsePlatformContainer: false
-        Matrix: dependencies.${{ parameters.GenerateJobName }}.outputs['generate_vm_job_matrix_${{ config.Name }}.matrix']
-        DependsOn: ${{ parameters.GenerateJobName }}
+        Matrix: dependencies.$[variables.invocationCounter].outputs['generate_vm_job_matrix_${{ config.Name }}.matrix']
+        DependsOn: $[variables.invocationCounter]
         CloudConfig: ${{ parameters.CloudConfig }}
         ${{ each param in parameters.AdditionalParameters }}:
           ${{ param.key }}: ${{ param.value }}
@@ -102,8 +103,8 @@ jobs:
     - template: ${{ parameters.JobTemplatePath }}
       parameters:
         UsePlatformContainer: true
-        Matrix: dependencies.${{ parameters.GenerateJobName }}.outputs['generate_container_job_matrix_${{ config.Name }}.matrix']
-        DependsOn: ${{ parameters.GenerateJobName }}
+        Matrix: dependencies.$[variables.invocationCounter].outputs['generate_container_job_matrix_${{ config.Name }}.matrix']
+        DependsOn: $[variables.invocationCounter]
         CloudConfig: ${{ parameters.CloudConfig }}
         ${{ each param in parameters.AdditionalParameters }}:
           ${{ param.key }}: ${{ param.value }}
