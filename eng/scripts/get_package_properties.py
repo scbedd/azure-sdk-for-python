@@ -5,7 +5,9 @@ import os
 import re
 import pdb
 
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 sys.path.append(os.path.join('scripts', 'devops_tasks'))
+
 from common_tasks import get_package_properties
 
 if __name__ == '__main__':
@@ -23,8 +25,8 @@ if __name__ == '__main__':
     for setup_path in found_setup_folders:
         try:
             pkgName, version, is_new_sdk, setup_py_path = get_package_properties(setup_path)
-            print("{0} {1} {2} {3}".format(pkgName, version, is_new_sdk, setup_py_path))
+            print("{0} {1} {2} {3}".format(pkgName, version, is_new_sdk, os.path.relpath(setup_py_path, root_dir)))
         except Exception as e:
             # Skip setup.py if the package cannot be parsed
-            pass   
+            pass
                             
