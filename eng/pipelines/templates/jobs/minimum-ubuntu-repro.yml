@@ -1,0 +1,28 @@
+jobs:
+  - job: Validate_RC_Python_Build_Linux
+    displayName: Validate Release Candidate Python - Linux
+    variables:
+      skipComponentGovernanceDetection: true
+      PythonVersion: '3.10.0-rc.2'
+
+    timeoutInMinutes: 90
+
+    pool:
+      vmImage: 'ubuntu-20.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: "Use Python 3.10-rc2"
+        inputs:
+          versionSpec: 3.10-rc2
+
+      - script: |
+          pip install setuptools==56.0.0 wheel==0.37.0 packaging==21.0
+          python -m pip freeze
+          python -m pip --version
+        displayName: Install Dependencies
+
+      - script: |
+          python scripts/devops_tasks/min-repro.py
+        displayName: 'Repro the Python Error'
+        continueOnError: true
