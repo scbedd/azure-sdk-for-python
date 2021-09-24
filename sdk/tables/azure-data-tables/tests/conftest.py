@@ -25,9 +25,16 @@
 # --------------------------------------------------------------------------
 import sys
 
+import pytest
+from devtools_testutils import add_sanitizer, ProxyRecordingSanitizer
+
 # fixture needs to be visible from conftest
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")
+
+@pytest.fixture(scope="session", autouse=True)
+def sanitize_uris():
+    add_sanitizer(ProxyRecordingSanitizer.URI, value="fakeendpoint")
