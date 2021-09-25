@@ -64,7 +64,7 @@ function Initialize-Recordings-Repo {
 
     try {
         Push-Location $AssetsRepoLocation
-        git clone --filter=blob:none --no-checkout "https://github.com/$AssetsRepo"
+        git clone --filter=blob:none --no-checkout "https://github.com/$AssetsRepo" .
     }
     finally {
         Pop-Location
@@ -80,14 +80,23 @@ function Reset-Recordings-Repo {
     )
     try {
         Push-Location $AssetsRepoLocation
+
+        Write-Host (Get-Location)
+
+        Write-Host "git checkout *"
         git checkout *
+        Write-Host "git clean -xdf"
         git clean -xdf
+        Write-Host "git reset --hard (Get-Default-Branch)"
         git reset --hard (Get-Default-Branch)
 
+        Write-Host "git sparse-checkout add $targetPath"
         git sparse-checkout add $targetPath
 
         if($RecordingRepoSHA){
+            Write-Host "git checkout $RecordingRepoSHA"
             git checkout $RecordingRepoSHA
+            Write-Host "git pull"
             git pull
         }
     }
