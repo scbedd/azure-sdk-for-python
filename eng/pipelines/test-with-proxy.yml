@@ -51,3 +51,18 @@ jobs:
           versionSpec: $(PythonVersion)
       - template: /eng/common/testproxy/test-proxy-tool.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
+
+  - job: 'macos'
+    displayName: 'Linux Tool Run'
+    pool:
+      vmImage: 'macOS-10.15'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+      - pwsh: |
+          Write-Host "Hello there"
+        displayName: 'Trust certificate mac'
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
