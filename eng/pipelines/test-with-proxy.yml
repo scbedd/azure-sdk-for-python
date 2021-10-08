@@ -67,8 +67,8 @@ jobs:
           packageType: sdk
           version: 5.0.205
       - pwsh: |
-          Write-Host "Hello there"
-          dotnet dev-certs https --trust --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" --password="password"
+          dotnet dev-certs https --clean --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" --password="password"
+          sudo dotnet dev-certs https --trust
         displayName: 'Trust certificate mac'
       - template: /eng/common/testproxy/test-proxy-docker.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
