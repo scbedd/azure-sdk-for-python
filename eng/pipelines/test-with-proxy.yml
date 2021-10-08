@@ -61,8 +61,14 @@ jobs:
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
+      - task: UseDotNet@2
+        displayName: "Use .NET Core SDK"
+        inputs:
+          packageType: sdk
+          version: 5.0.205
       - pwsh: |
           Write-Host "Hello there"
+          dotnet dev-certs https --trust --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" --password="password"
         displayName: 'Trust certificate mac'
-      - template: /eng/common/testproxy/test-proxy-tool.yml
+      - template: /eng/common/testproxy/test-proxy-docker.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
