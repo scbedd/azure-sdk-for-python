@@ -72,9 +72,9 @@ jobs:
           sudo dotnet dev-certs https --trust
         displayName: 'Trust certificate'
         continueOnError: true
-      - pwsh: |
-          security add-trusted-cert -h
-        displayName: "Debug"
+      # - pwsh: |
+      #     security add-trusted-cert -h
+      #   displayName: "Debug"
       - pwsh: |
           sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx
         displayName: "Trust certificate attempt 2"
