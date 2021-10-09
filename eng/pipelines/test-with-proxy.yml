@@ -67,8 +67,6 @@ jobs:
           packageType: sdk
           version: 5.0.205
       - pwsh: |
-          get-content $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.crt
-          dotnet dev-certs https --clean --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -p password
           sudo dotnet dev-certs https --trust
         displayName: 'Trust certificate'
         continueOnError: true
