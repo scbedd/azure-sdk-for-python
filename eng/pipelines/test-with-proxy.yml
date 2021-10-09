@@ -67,8 +67,16 @@ jobs:
           packageType: sdk
           version: 5.0.205
       - pwsh: |
-          dotnet dev-certs https --clean --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" --password="password"
+          get-content $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.crt
+          dotnet dev-certs https --clean --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -p password
           sudo dotnet dev-certs https --trust
-        displayName: 'Trust certificate mac'
+        displayName: 'Trust certificate'
+        continueOnError: true
+      - pwsh: |
+          security add-trusted-cert -h
+        displayName: "Debug"
+      - pwsh: |
+          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx
+        displayName: "Trust certificate attempt 2"
       - template: /eng/common/testproxy/test-proxy-docker.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
