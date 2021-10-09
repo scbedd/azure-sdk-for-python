@@ -66,6 +66,10 @@ jobs:
         inputs:
           packageType: sdk
           version: 5.0.205
+
+      # The original import below (commented out) doesn't work because our dotnet-devcert.pfx was originally exported in pkcs12 format as seen here 
+      # https://github.com/BorisWilhelms/create-dotnet-devcert/blob/main/scripts/common.sh#L53
+      # given that we exported in pkcs12 format, we can't use dotnet-devcerts because of a compatibility issue. Reference to that: https://stackoverflow.com/a/44222733
       - pwsh: |
           # get-content $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.crt
           # dotnet dev-certs https --clean --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -p password
@@ -75,8 +79,6 @@ jobs:
       # - pwsh: |
       #     security add-trusted-cert -h
       #   displayName: "Debug"
-      # this method doesn't work because our dotnet-devcert.pfx was originally exported in pkcs12 format as seen here https://github.com/BorisWilhelms/create-dotnet-devcert/blob/main/scripts/common.sh#L53
-      # so we can't 
       # - pwsh: |
       #     sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx
       #   displayName: "Trust certificate attempt 2"
