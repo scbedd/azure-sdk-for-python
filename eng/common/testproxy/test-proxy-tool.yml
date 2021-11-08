@@ -26,7 +26,7 @@ steps:
   - pwsh: |
       dotnet tool install azure.sdk.tools.testproxy `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
-        --global
+        --global `
         --version 1.0.0-dev.20211104.2 `
         --framework net5.0
     displayName: "Install test-proxy"
