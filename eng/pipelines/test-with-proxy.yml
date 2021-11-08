@@ -16,17 +16,17 @@ jobs:
   #     - template: /eng/common/testproxy/test-proxy-docker.yml
   #     - template : /eng/pipelines/templates/steps/check-availability.yml
 
-  # - job: 'win2019tool'
-  #   displayName: 'Windows Tool Run'
-  #   pool:
-  #     vmImage: 'windows-2019'
-  #   steps:
-  #     - task: UsePythonVersion@0
-  #       displayName: 'Use Python $(PythonVersion)'
-  #       inputs:
-  #         versionSpec: $(PythonVersion)
-  #     - template: /eng/common/testproxy/test-proxy-tool.yml
-  #     - template : /eng/pipelines/templates/steps/check-availability.yml
+  - job: 'win2019tool'
+    displayName: 'Windows Tool Run'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
 
   # - job: 'linux2020docker'
   #   displayName: 'Linux Docker Run'
@@ -40,42 +40,25 @@ jobs:
   #     - template: /eng/common/testproxy/test-proxy-docker.yml
   #     - template : /eng/pipelines/templates/steps/check-availability.yml
 
-  # - job: 'linux2020tool'
-  #   displayName: 'Linux Tool Run'
-  #   pool:
-  #     vmImage: 'ubuntu-20.04'
-  #   steps:
-  #     - task: UsePythonVersion@0
-  #       displayName: 'Use Python $(PythonVersion)'
-  #       inputs:
-  #         versionSpec: $(PythonVersion)
-  #     - template: /eng/common/testproxy/test-proxy-tool.yml
-  #     - template : /eng/pipelines/templates/steps/check-availability.yml
-
-  - job: 'macos'
-    displayName: 'Mac Docker Run'
+  - job: 'linux2020tool'
+    displayName: 'Linux Tool Run'
     pool:
-      vmImage: 'macOS-10.15'
+      vmImage: 'ubuntu-20.04'
     steps:
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
-      - task: UseDotNet@2
-        displayName: "Use .NET Core SDK"
-        inputs:
-          packageType: sdk
-          version: 5.0.205
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
 
-      # The original import below (commented out) doesn't work because our dotnet-devcert.pfx was originally exported in pkcs12 format as seen here 
-      # https://github.com/BorisWilhelms/create-dotnet-devcert/blob/main/scripts/common.sh#L53
-      # given that we exported in pkcs12 format, we can't use dotnet-devcerts because of a compatibility issue. Reference to that: https://stackoverflow.com/a/44222733
-      - pwsh: |
-          # get-content $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.crt
-          # dotnet dev-certs https --clean --import="$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -p password
-          sudo dotnet dev-certs https --clean
-          sudo dotnet dev-certs https --trust
-        displayName: 'Trust certificate'
+  - job: 'macos'
+    displayName: 'Mac Tool Run'
+    pool:
+      vmImage: 'macOS-10.15'
+    steps:
+      - template: /eng/common/testproxy/test-proxy-tool.yml
+      - template : /eng/pipelines/templates/steps/check-availability.yml
       # - pwsh: |
       #     security add-trusted-cert -h
       #   displayName: "Debug"
