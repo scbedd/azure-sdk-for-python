@@ -30,6 +30,12 @@ steps:
         --version 1.0.0-dev.20211104.2
     displayName: "Install test-proxy"
 
+  - bash: |
+      echo "##vso[task.setvariable variable=DOTNET_ROOT]$(dirname $(which dotnet))"
+      echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_ROOL/host/fxr/5.0.8"
+    displayName: Mac Patches
+    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
+
   - pwsh: |
       Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
         -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
@@ -39,12 +45,8 @@ steps:
   
   # nohup does NOT continue beyond the current session if you use it within powershell
   - bash: |
-      which dotnet
       echo $PATH
-      export DOTNET_ROOT=$(dirname $(which dotnet))
       echo $DOTNET_ROOT
-
-      export PATH=$DOTNET_ROOT:$PATH
       echo $PATH
       export COREHOST_TRACE=1
       sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
