@@ -42,16 +42,8 @@ steps:
   - bash: |
       which dotnet
       echo $PATH
-      export DOTNET_ROOT=$(dirname $(realpath $(which dotnet)))
-      sudo nohup test-proxy &
-    displayName: "Run the testproxy - linux/mac"
-    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
-    workingDirectory: "${{ parameters.rootFolder }}"
-
-  # nohup does NOT continue beyond the current session if you use it within powershell
-  - bash: |
-      which dotnet
-      echo $PATH
+      export DOTNET_ROOT=$(dirname $(which dotnet))
+      echo $DOTNET_ROOT
       sudo nohup test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
