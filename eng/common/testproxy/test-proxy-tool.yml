@@ -36,10 +36,15 @@ steps:
       echo "##vso[task.setvariable variable=DOTNET_ROOT]/Users/runner/.dotnet/tools"
       echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_ROOT/host/fxr/5.0.8"
       echo "##vso[task.setvariable variable=DYLD_LIBRARY_PATH]$DOTNET_ROOT/host/fxr/5.0.8"
-      cat /etc/dotnet/install_location
     displayName: Mac Patches
     continueOnError: true
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
+
+  - pwsh: |
+      mkdir trash
+      cd trash
+      dotnet new console
+    displayName: Can we do ANYTHING?
 
   - pwsh: |
       Get-ChildItem -R $DOTNET_ROOT
