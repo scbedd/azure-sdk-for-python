@@ -31,7 +31,7 @@ steps:
     displayName: "Install test-proxy"
 
   - pwsh: |
-      Start-Process test-proxy `
+      Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
         -ArgumentList "--storage-location '${{ parameters.rootFolder }}'" `
         -NoNewWindow -PassThru
     displayName: 'Run the testproxy - windows'
@@ -43,6 +43,10 @@ steps:
       echo $PATH
       export DOTNET_ROOT=$(dirname $(which dotnet))
       echo $DOTNET_ROOT
+
+      export PATH=$DOTNET_ROOT:$PATH
+      echo $PATH
+
       sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
