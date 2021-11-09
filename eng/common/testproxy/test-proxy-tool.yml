@@ -13,6 +13,7 @@ steps:
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Password]password"
+      Write-Host "##vso[task.setvariable variable=TEST_PROXY_VERSION]1.0.0-dev.20211104.2"
     displayName: 'Configure Kestrel Environment Variables'
 
   # 
@@ -27,12 +28,12 @@ steps:
       dotnet tool install azure.sdk.tools.testproxy `
         --tool-path $(Build.BinariesDirectory)/test-proxy `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
-        --version 1.0.0-dev.20211104.2
+        --version $(TEST_PROXY_VERSION)
     displayName: "Install test-proxy"
 
   - bash: |
       echo "##vso[task.setvariable variable=DOTNET_ROOT]$(dirname $(which dotnet))"
-      echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_ROOL/host/fxr/5.0.8"
+      echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_TOOL/host/fxr/5.0.8"
     displayName: Mac Patches
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
 
