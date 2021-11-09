@@ -46,13 +46,7 @@ steps:
       mkdir trash
       cd trash
       dotnet new console
-    displayName: Can we do ANYTHING?
-
-  - pwsh: |
-      Get-ChildItem -R $DOTNET_ROOT
-    displayName: 'Run the testproxy - windows'
-    condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
-
+      Get-ChildItem -R /Users/runner/hostedtoolcache/dotnet/sdk/5.0.205/
 
   - pwsh: |
       Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
@@ -72,7 +66,7 @@ steps:
 
       which test-proxy
 
-      sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
+      sudo nohup test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
