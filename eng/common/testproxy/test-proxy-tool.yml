@@ -66,6 +66,8 @@ steps:
 
       which test-proxy
 
+      Write-Host "${{ parameters.rootFolder }}"
+
       nohup test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
