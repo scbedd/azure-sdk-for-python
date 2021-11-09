@@ -33,7 +33,7 @@ steps:
 
   - bash: |
       export DOTNET_ROOT=$(dirname $(which dotnet))
-      echo "##vso[task.setvariable variable=DOTNET_ROOT]$(dirname $(which dotnet))"
+      echo "##vso[task.setvariable variable=DOTNET_ROOT]/Users/runner/.dotnet/tools"
       echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_ROOT/host/fxr/5.0.8"
       echo "##vso[task.setvariable variable=DYLD_LIBRARY_PATH]$DOTNET_ROOT/host/fxr/5.0.8"
       cat /etc/dotnet/install_location
