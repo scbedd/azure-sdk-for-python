@@ -26,7 +26,7 @@ steps:
 
   - pwsh: |
       dotnet tool install azure.sdk.tools.testproxy `
-        --tool-path $(Build.BinariesDirectory)/test-proxy `
+        --global `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version $(TEST_PROXY_VERSION)
     displayName: "Install test-proxy"
@@ -69,6 +69,9 @@ steps:
       echo $PATH
       echo $DYLD_FALLBACK_LIBRARY_PATH
       export COREHOST_TRACE=1
+
+      which test-proxy
+
       sudo nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
