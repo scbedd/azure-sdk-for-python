@@ -17,7 +17,7 @@ steps:
     displayName: 'Configure Kestrel Environment Variables'
 
   - pwsh: |
-      dotnet info
+      dotnet --info
     displayName: Dump default dotnet info
 
   - task: UseDotNet@2
