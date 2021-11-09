@@ -35,7 +35,7 @@ steps:
       echo "##vso[task.setvariable variable=DOTNET_ROOT]$(dirname $(which dotnet))"
       echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_TOOL/host/fxr/5.0.8"
       
-      cp $DOTNET_TOOL/host/fxr/5.0.12/libhostfxr.dylib /Users/runner/work/1/b/test-proxy/.store/azure.sdk.tools.testproxy/$(TEST_PROXY_VERSION)/azure.sdk.tools.testproxy/$(TEST_PROXY_VERSION)/tools/net5.0/any/libhostfxr.dylib
+      cp $(dirname $(which dotnet))/host/fxr/5.0.12/libhostfxr.dylib /Users/runner/work/1/b/test-proxy/.store/azure.sdk.tools.testproxy/$(TEST_PROXY_VERSION)/azure.sdk.tools.testproxy/$(TEST_PROXY_VERSION)/tools/net5.0/any/libhostfxr.dylib
     displayName: Mac Patches
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
 
