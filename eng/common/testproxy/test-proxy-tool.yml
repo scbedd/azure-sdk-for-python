@@ -21,7 +21,7 @@ steps:
     displayName: "Use .NET Core SDK"
     inputs:
       packageType: sdk
-      version: 5.X
+      version: 5.x
 
   - pwsh: |
       dotnet tool install azure.sdk.tools.testproxy `
@@ -45,6 +45,7 @@ steps:
   
   # nohup does NOT continue beyond the current session if you use it within powershell
   - bash: |
+      dotnet --info
       echo $PATH
       echo $DOTNET_ROOT
       echo $PATH
