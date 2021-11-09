@@ -13,42 +13,14 @@ steps:
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"
       Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Password]password"
-      Write-Host "##vso[task.setvariable variable=TEST_PROXY_VERSION]1.0.0-dev.20211104.2"
     displayName: 'Configure Kestrel Environment Variables'
 
   - pwsh: |
-      dotnet --info
-    displayName: Dump default dotnet info
-
-  - task: UseDotNet@2
-    displayName: "Use .NET Core SDK"
-    inputs:
-      packageType: sdk
-      version: 5.0.205
-
-  - pwsh: |
       dotnet tool install azure.sdk.tools.testproxy `
-        --global `
+        --tool-path $(Build.BinariesDirectory)/test-proxy `
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
-        --version $(TEST_PROXY_VERSION)
+        --version 1.0.0-dev.20211104.2
     displayName: "Install test-proxy"
-
-  - bash: |
-      cp $DOTNET_TOOL/host/fxr/5.0.12/libhostfxr.dylib /Users/runner/work/1/b/test-proxy/.store/azure.sdk.tools.testproxy/$(TEST_PROXY_VERSION)/azure.sdk.tools.testproxy/$(TEST_PROXY_VERSION)/tools/net5.0/any/libhostfxr.dylib
-
-      export DOTNET_ROOT=$(dirname $(which dotnet))
-      echo "##vso[task.setvariable variable=DOTNET_ROOT]$(dirname $(which dotnet))"
-      echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH]$DOTNET_ROOT/host/fxr/5.0.8"
-      echo "##vso[task.setvariable variable=DYLD_LIBRARY_PATH]$DOTNET_ROOT/host/fxr/5.0.8"
-    displayName: Mac Patches
-    continueOnError: true
-    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
-
-  - pwsh: |
-      mkdir trash
-      cd trash
-      dotnet new console
-      Get-ChildItem -R /Users/runner/hostedtoolcache/dotnet/sdk/5.0.205/
 
   - pwsh: |
       Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
@@ -56,25 +28,10 @@ steps:
         -NoNewWindow -PassThru
     displayName: 'Run the testproxy - windows'
     condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
-  
+
   # nohup does NOT continue beyond the current session if you use it within powershell
   - bash: |
-      dotnet --info
-      echo $PATH
-      echo $DOTNET_ROOT
-      echo $PATH
-      echo $DYLD_FALLBACK_LIBRARY_PATH
-      export COREHOST_TRACE=1
-
-      which test-proxy
-
-      Write-Host "${{ parameters.rootFolder }}"
-
-      nohup test-proxy &
+      nohup $(Build.BinariesDirectory)/test-proxy/test-proxy &
     displayName: "Run the testproxy - linux/mac"
     condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
     workingDirectory: "${{ parameters.rootFolder }}"
-
-  - pwsh: |
-      Write-Host "##vso[task.setvariable variable=PATH]$(OriginalPath)"
-    displayName: 'Restore .NET version by resetting path'
