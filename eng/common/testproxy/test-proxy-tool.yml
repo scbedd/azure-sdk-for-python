@@ -21,7 +21,7 @@ steps:
     displayName: "Use .NET Core SDK"
     inputs:
       packageType: sdk
-      version: 5.0.8
+      version: 5.0.205
 
   - pwsh: |
       dotnet tool install azure.sdk.tools.testproxy `
