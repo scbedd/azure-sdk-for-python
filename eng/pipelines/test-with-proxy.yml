@@ -51,6 +51,9 @@ jobs:
           versionSpec: $(PythonVersion)
       - template: /eng/common/testproxy/test-proxy-tool.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
+      - pwsh: |
+          cat $(Build.SourcesDirectory)/test-proxy.log
+        displayName: dump output file
 
   - job: 'macos'
     displayName: 'Mac Tool Run'
@@ -59,6 +62,9 @@ jobs:
     steps:
       - template: /eng/common/testproxy/test-proxy-tool.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
+      - pwsh: |
+          cat $(Build.SourcesDirectory)/test-proxy.log
+        displayName: dump output file
       # - pwsh: |
       #     security add-trusted-cert -h
       #   displayName: "Debug"
