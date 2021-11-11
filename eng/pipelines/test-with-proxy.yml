@@ -27,6 +27,9 @@ jobs:
           versionSpec: $(PythonVersion)
       - template: /eng/common/testproxy/test-proxy-tool.yml
       - template : /eng/pipelines/templates/steps/check-availability.yml
+      - pwsh: |
+          cat $(Build.SourcesDirectory)/test-proxy.log
+        displayName: dump output file
 
   # - job: 'linux2020docker'
   #   displayName: 'Linux Docker Run'
