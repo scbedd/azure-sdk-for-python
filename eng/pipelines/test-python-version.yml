@@ -27,15 +27,15 @@ jobs:
           $commonCertName = "ASP.NET Core HTTPS development certificate"
 
           # local machine
-          $personalCert = Import-PfxCertificate -FilePath $(Build.SourcesDirectory/eng/common/testproxy/dotnet-devcert.pfx -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
+          $personalCert = Import-PfxCertificate -FilePath "$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
           (Get-ChildItem -Path Cert:\LocalMachine\My\$($personalCert.Thumbprint)).FriendlyName = $commonCertName
-          $rootCert = Import-PfxCertificate -FilePath $(Build.SourcesDirectory/eng/common/testproxy/dotnet-devcert.pfx -CertStoreLocation Cert:\LocalMachine\Root\ -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
+          $rootCert = Import-PfxCertificate -FilePath "$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -CertStoreLocation Cert:\LocalMachine\Root\ -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
           (Get-ChildItem -Path Cert:\LocalMachine\Root\$($rootCert.Thumbprint)).FriendlyName = $commonCertName
 
           # current user
-          $personalCert = Import-PfxCertificate -FilePath $(Build.SourcesDirectory/eng/common/testproxy/dotnet-devcert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
+          $personalCert = Import-PfxCertificate -FilePath "$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
           (Get-ChildItem -Path Cert:\CurrentUser\My\$($personalCert.Thumbprint)).FriendlyName = $commonCertName
-          $rootCert = Import-PfxCertificate -FilePath $(Build.SourcesDirectory/eng/common/testproxy/dotnet-devcert.pfx -CertStoreLocation Cert:\CurrentUser\Root\ -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
+          $rootCert = Import-PfxCertificate -FilePath "$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -CertStoreLocation Cert:\CurrentUser\Root\ -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
           (Get-ChildItem -Path Cert:\CurrentUser\Root\$($rootCert.Thumbprint)).FriendlyName = $commonCertName
         displayName: Trust dev cert manually
 
