@@ -28,7 +28,7 @@ jobs:
 
           # local machine
           $personalCert = Import-PfxCertificate -FilePath "$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
-          # (Get-ChildItem -Path Cert:\LocalMachine\My\$($personalCert.Thumbprint)).FriendlyName = $commonCertName
+          (Get-ChildItem -Path Cert:\LocalMachine\My\$($personalCert.Thumbprint)).FriendlyName = $commonCertName
           # $rootCert = Import-PfxCertificate -FilePath "$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx" -CertStoreLocation Cert:\LocalMachine\Root\ -Password (ConvertTo-SecureString "password" -AsPlainText -Force)
           # (Get-ChildItem -Path Cert:\LocalMachine\Root\$($rootCert.Thumbprint)).FriendlyName = $commonCertName
 
