@@ -50,7 +50,7 @@ jobs:
       - task: UsePythonVersion@0
         displayName: 'Use Python pypy7.3.7'
         inputs:
-          versionSpec: pypy3
+          versionSpec: pypy7.3.7
 
       - pwsh: |
           Write-Host $env:PATH
@@ -65,9 +65,9 @@ jobs:
       vmImage: 'macOS-10.15'
     steps:
       - task: UsePythonVersion@0
-        displayName: 'Use Python pypy'
+        displayName: 'Use Python pypy3.8.12'
         inputs:
-          versionSpec: pypy
+          versionSpec: pypy3.8.12
 
       - pwsh: |
           Write-Host $env:PATH
