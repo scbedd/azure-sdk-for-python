@@ -1,7 +1,7 @@
 trigger: none
 
 variables:
-  PythonVersion: '3.9'
+  PythonVersion: 'pypy3.7'
 
 jobs:
   # - job: 'win2019docker'
