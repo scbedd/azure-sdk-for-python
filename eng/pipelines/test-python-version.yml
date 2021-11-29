@@ -1,0 +1,85 @@
+trigger: none
+
+jobs:
+  # - job: 'win2019docker'
+  #   displayName: 'Windows Docker Run'
+  #   pool:
+  #     vmImage: 'windows-2019'
+  #   steps:
+  #     - task: UsePythonVersion@0
+  #       displayName: 'Use Python $(PythonVersion)'
+  #       inputs:
+  #         versionSpec: $(PythonVersion)
+  #     - template: /eng/common/testproxy/test-proxy-docker.yml
+  #     - template : /eng/pipelines/templates/steps/check-availability.yml
+
+  - job: 'win2019tool'
+    displayName: 'Check Windows'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python pypy3'
+        inputs:
+          versionSpec: pypy3
+
+      - pwsh: |
+          Write-Host $env:PATH
+          Write-Host "-----"
+          python --version
+          python -c "import sys; print(sys.executable)"
+        displayName: Dump Path and python versions
+
+  # - job: 'linux2020docker'
+  #   displayName: 'Linux Docker Run'
+  #   pool:
+  #     vmImage: 'ubuntu-20.04'
+  #   steps:
+  #     - task: UsePythonVersion@0
+  #       displayName: 'Use Python $(PythonVersion)'
+  #       inputs:
+  #         versionSpec: $(PythonVersion)
+  #     - template: /eng/common/testproxy/test-proxy-docker.yml
+  #     - template : /eng/pipelines/templates/steps/check-availability.yml
+
+  - job: 'linux2020tool'
+    displayName: 'Check Linux'
+    pool:
+      vmImage: 'ubuntu-20.04'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python pypy7.3.7'
+        inputs:
+          versionSpec: pypy3
+
+      - pwsh: |
+          Write-Host $env:PATH
+          Write-Host "-----"
+          python --version
+          python -c "import sys; print(sys.executable)"
+        displayName: Dump Path and python versions
+
+  - job: 'macos'
+    displayName: 'Check Mac'
+    pool:
+      vmImage: 'macOS-10.15'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python pypy'
+        inputs:
+          versionSpec: pypy
+
+      - pwsh: |
+          Write-Host $env:PATH
+          Write-Host "-----"
+          python --version
+          python -c "import sys; print(sys.executable)"
+        displayName: Dump Path and python versions
+      # - pwsh: |
+      #     security add-trusted-cert -h
+      #   displayName: "Debug"
+      # - pwsh: |
+      #     sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain $(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx
+      #   displayName: "Trust certificate attempt 2"
+      # - template: /eng/common/testproxy/test-proxy-docker.yml
+      # - template : /eng/pipelines/templates/steps/check-availability.yml
