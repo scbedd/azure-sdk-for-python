@@ -85,10 +85,14 @@ def start_testserver():
     raise ValueError("Didn't start!")
 
 def terminate_testserver(process):
+    print("attempting to kill testserver")
+    
+    result = os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
     if os.name == 'nt':
         process.kill()
     else:
-        os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
+        result = os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
+    print("finished killing")
 
 @pytest.fixture(autouse=True, scope="package")
 def testserver():
