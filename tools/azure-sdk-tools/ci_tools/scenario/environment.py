@@ -3,9 +3,9 @@ from types import SimpleNamespace
 
 from ci_tools.logging import initialize_logger
 
-def clean_environment() -> None:
+def align_environment() -> None:
     parser = argparse.ArgumentParser(
-        description="""This is the primary entrypoint for """,
+        description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
     )
 
     parser.add_argument(
@@ -21,7 +21,7 @@ def clean_environment() -> None:
         help=("The name of the scenario that should be generated for the targeted package."),
     )
 
-    logger = initialize_logger('clean_environment')
+    logger = initialize_logger('generator')
 
     args, unknown = parser.parse_known_args()
 
@@ -32,3 +32,11 @@ def clean_environment() -> None:
     else:
         print("Unrecognized error.")
         exit(1)
+
+def optional_scenario(package: str, additional_args: SimpleNamespace, inclusive=True) -> None:
+    """
+    Used to generate an 'optional' scenario. This effectively means installing a package, its dev_reqs, and any necessary common tooling,
+    then explicitly _removing_ some optional packages from the environment before testing.
+    """
+
+
