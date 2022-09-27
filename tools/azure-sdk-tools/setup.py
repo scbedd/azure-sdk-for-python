@@ -48,6 +48,8 @@ setup(
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
             "sdk_increment_version=ci_tools.versioning.version_increment:version_increment_main",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
+            "sdk_scenario_generate=ci_tools.scenario.generate_scenario"
+            "sdk_scenario_clean=ci_tools.scenario.clean_environment"
         ],
     },
     extras_require={
