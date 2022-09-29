@@ -1,0 +1,1 @@
+-r ../../tools/azure-sdk-tools[build]
