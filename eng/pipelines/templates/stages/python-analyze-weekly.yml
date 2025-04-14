@@ -19,6 +19,10 @@ stages:
       - job: 'Analyze'
         timeoutInMinutes: 90
 
+        variables:
+          - name: PythonVersion
+            value: '3.9'
+
         pool:
           name: $(LINUXPOOL)
           image: $(LINUXVMIMAGE)
