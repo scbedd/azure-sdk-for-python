@@ -2,7 +2,7 @@
 
 ## 1.0.0 (2023-05-19)
 
-### other change
+### Other Changes
 
   - First GA
 
