@@ -7,6 +7,20 @@ description: Assist developers in reproducing issues seen in CI locally. Use thi
 
 # Local Repro
 
+## Understanding upstream
+
+Please note that in CI, we use `eng/pipelines/templates/steps/auth-dev-feed.yml` to set PIP_INDEX_URL and `UV_DEFAULT_INDEX` to index urls with a key within them. This auth-ed URL has `collaborator` permissions so that NEW versions of an upstream dependency can be pulled through into our dev feed at `https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/`. This is not possible for un-authed users. When reproducing CI failures locally, your local environment will not have access to this auth-ed feed unless you explicitly configure it, so dependency resolution may differ from what CI sees if a new upstream version has been published but not yet available in the public feed. PLEASE NOTE THIS when diagnosing an issue. An issue may STEM FROM the fact that a newer version is available through upstream, so the issue only appears for CI (aka auth-ed) feed accessors.
+
+If the user has provided an auth-ed index URL, it'll be populated in `UV_DEFAULT_INDEX` and `PIP_INDEX_URL` BEFORE we ask you to investigate an issue.
+
+## Getting the build artifacts from the PR
+
+Unless the `Build Extended` job has failed, the artifact produced by that job will be available for download from the build run associated with the PR. This artifact contains the built packages that were produced by the pipeline and can be used to test locally against the exact binaries that CI produced. This artifact is called `packages_extended` and can be downloaded from the artifacts tab of the build run that corresponds to the PR.
+
+As a prestep to ANY validation, use the `ADO_TOKEN` and the REST API to programmatically download the artifact from the build run associated with the PR so that you can test against the exact binaries that CI produced.
+
+Download the artifact, then unzip it into a local directory called `packages/`. This directory should be provided as the value of option `--wheel-dir <PATH_TO_LOCAL_PACKAGES_DIR>` or `-w <PATH_TO_LOCAL_PACKAGES_DIR>` when invoking any local test commands that consume the built wheels. This will ensure that the local tests are running against the exact wheels that CI produced, rather than potentially pulling in different versions from PyPI or rebuilding in each test task. This has real impact on how the repro follows.
+
 ## Checking out the correct code
 
 Before attempting to reproduce any CI failure, you **must** ensure your local checkout matches the exact code that CI ran against. A mismatch between your local state and the CI commit will produce misleading results.
@@ -91,3 +105,11 @@ export ADO_TOKEN=$TOKEN
 ```
 
 Then, any agent with knowledge of the devops REST api can query the logs of the build using the same URL as above, but with Bearer token authentication leveraging your `ADO_TOKEN`.
+
+### A note about nightly builds
+
+When a build is triggered with queue time variable `SetDevVersion=true` or has build reason `Scheduled`, we always apply `eng/pipelines/templates/steps/set-dev-build.yml` to the local packages before building or testing. You will need to do this to reflect reality.
+
+## CI_ONLY behavior
+
+There is some code in the checks around relative dependency replacement + REQUIRING a wheel from the artifacts folder. This is indicated by the presence of `TF_BUILD=true`. If this is not set when you are reproing, you SHOULD set this.
